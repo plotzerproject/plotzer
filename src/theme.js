@@ -1,4 +1,4 @@
-import { extendTheme, textDecoration } from "@chakra-ui/react";
+import { extendTheme } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
 
 //informações adicionais do tema como cor e talz
