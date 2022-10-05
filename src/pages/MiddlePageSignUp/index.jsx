@@ -22,7 +22,7 @@ function MiddlePageSignUp() {
     }
 
     return (
-        <Flex w="100vw" h="100vh" alignItems={'center'} justifyContent='center'>
+        <Flex w="100vw" h="100vh" alignItems={'center'} justifyContent='center' bgColor={'blue.400'}>
             <Container maxW={"container.lg"} >
                 <Flex align={"center"} justifyContent="space-between" color="white">
                     <VStack align={"left"} maxW="400px">

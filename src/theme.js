@@ -6,7 +6,8 @@ const customTheme = {
     styles: {
         global: (props) => ({
           body: {
-            bg: mode("blue.400",'blue.700')(props),
+            bg: mode("gray.200",'blue.700')(props),
+            // bg: mode("blue.400",'blue.700')(props),
           }
         })
       },

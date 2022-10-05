@@ -33,7 +33,7 @@ function SignUp() {
     }
 
     return (
-        <Flex align='center' justifyContent='center' w="100vw" h="100vh">
+        <Flex align='center' justifyContent='center' w="100vw" h="100vh" bgColor={'blue.400'}>
             <Container maxW="container.sm" centerContent bgColor={'white'} p={10} borderRadius={'8px'}>
                 <VStack
                     // divider={}
