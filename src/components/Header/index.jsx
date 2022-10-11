@@ -2,7 +2,6 @@ import { BellIcon, ChevronDownIcon, MoonIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   Box,
-  ButtonGroup,
   Divider,
   Flex,
   Heading,
@@ -24,7 +23,7 @@ function Header({ page, user }) {
     >
       <Box p="2">
         <Heading size="md" color={"white"} lineHeight="6" fontWeight="normal">
-          {page}
+          <strong>{page}</strong>
         </Heading>
       </Box>
       <Spacer />
@@ -32,9 +31,9 @@ function Header({ page, user }) {
       <Icon as={MoonIcon} w="32px" h="32px" color="white" />
       <Divider orientation="vertical" borderColor="gray.300" h={"32px"} />
       <Text fontSize="md" color="white">
-        {user}
+        {user.name}
       </Text>
-      <Avatar name={user} size="md" src="https://bit.ly/broken-link" />
+      <Avatar name={user.name} size="md" src={user.photo} />
       <Icon as={ChevronDownIcon} w="32px" h="32px" color={"white"} />
     </Flex>
   );

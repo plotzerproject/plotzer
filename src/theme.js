@@ -3,6 +3,9 @@ import { mode } from "@chakra-ui/theme-tools";
 
 //informações adicionais do tema como cor e talz
 const customTheme = {
+    colors: {
+        transparent: 'transparent',
+    },
     styles: {
         global: (props) => ({
           body: {

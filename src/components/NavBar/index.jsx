@@ -1,8 +1,28 @@
-import { FaCommentAlt, FaUserFriends, FaRegCalendarAlt, FaArchive } from 'react-icons/fa';
-import { Divider, Flex, Icon, Image, Spacer, VStack } from "@chakra-ui/react";
+import {
+  FaCommentAlt,
+  FaUserFriends,
+  FaRegCalendarAlt,
+  FaArchive,
+} from "react-icons/fa";
+import {
+  Divider,
+  Flex,
+  IconButton,
+  Image,
+  Spacer,
+  VStack,
+} from "@chakra-ui/react";
 import LogoCircle from "../../assets/logo_circle.svg";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function NavBar() {
+  const navigate = useNavigate();
+
+  async function handleChangePage(page) {
+    await navigate(page);
+  }
+
   return (
     <nav>
       <Flex
@@ -17,17 +37,42 @@ function NavBar() {
             borderRadius="full"
             boxSize="64px"
             src={LogoCircle}
-            alt="Dan Abramov"
+            alt="Plotzer's Logo"
           />
           <Divider orientation="horizontal" borderColor="gray.300" w={"32px"} />
           <VStack>
-            <Icon as={FaCommentAlt} color={'white'} w="32px" h="32px" />
+            <IconButton
+              color={'white'}
+              variant="ghost"
+              aria-label="Chat"
+              fontSize="24px"
+              // onClick={handleChangePage("/chat")}
+              icon={<FaCommentAlt />}
+            />
             <Spacer />
-            <Icon as={FaUserFriends} color={'white'} w="32px" h="32px" />
+            <IconButton
+              aria-label="My Teams"
+              fontSize="24px"
+              color={'white'}
+              variant="ghost"
+              icon={<FaUserFriends />}
+            />
             <Spacer />
-            <Icon as={FaRegCalendarAlt} color={'white'} w="32px" h="32px" />
+            <IconButton
+              aria-label="Calendar"
+              fontSize="24px"
+              color={'white'}
+              variant="ghost"
+              icon={<FaRegCalendarAlt />}
+            />
             <Spacer />
-            <Icon as={FaArchive} color={'white'} w="32px" h="32px" />
+            <IconButton
+              aria-label="Methodologies"
+              fontSize="24px"
+              color={'white'}
+              variant="ghost"
+              icon={<FaArchive />}
+            />
           </VStack>
         </VStack>
       </Flex>

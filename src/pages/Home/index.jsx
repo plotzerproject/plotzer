@@ -1,6 +1,11 @@
+import { Link } from "@chakra-ui/react"
+
 function Home ( ) {
     return (
-        <h1>teste</h1>
+        <>
+            <Link href="/signup">Cadastrar</Link>
+            <Link href="/login">Logar</Link>
+        </>
     )
 }
 export default Home

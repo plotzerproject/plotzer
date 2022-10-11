@@ -4,8 +4,6 @@ import { AuthProvider } from './contexts/AuthContext'
 import { ReactRoutes } from "./routes";
 
 function App() {
-
-
   return (
     <>
       <BrowserRouter>

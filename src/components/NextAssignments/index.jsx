@@ -1,19 +1,9 @@
 import { Divider, Flex, Heading, VStack } from "@chakra-ui/react";
+import assignments from "../../utils/assigments";
 import Assignment from "../Assignment";
 
 function NextAssignments() {
-    const assignments = [
-        {
-            id: "1",
-            title: "Teste 01",
-            subtitle: {
-                team: "Time 1",
-                area: "Tecnologia",
-            },
-            limit: Date.now(),
-            img: "https://api.lorem.space/image/movie?w=150&amp;amp;amp;amp;h=220"
-        },
-    ]
+    
     return (
         <Flex bgColor={'gray.300'} h="100%" w="95%" borderRadius={'md'}>
             <VStack w="100%">
