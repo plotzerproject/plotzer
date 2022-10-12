@@ -1,6 +1,9 @@
+import Base from '../../components/Base'
+
 function Methodologies () {
     return (
-        <>methodologies</>
+        <Base>
+        </Base>
     )
 }
 

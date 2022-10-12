@@ -28,14 +28,14 @@ function MiddlePageSignUp() {
                     <VStack align={"left"} maxW="400px">
                         <Image src={Logo} />
                         <Spacer />
-                        <Heading as="h1" size="lg" fontWeight="bold">Bem vindo ao Plotzer</Heading>
-                        <Text fontSize="lg">Você se tornou um novo usuário do Plotzer. Escolha se deseja criar uma equipe ou entrar em alguma já existente.</Text>
+                        <Heading as="h1" size="lg" fontWeight="bold">Welcome to Plotzer</Heading>
+                        <Text fontSize="lg">You've become a new Plotzer user. Choose whether to create a team or join an existing one.</Text>
                         <VStack align={'left'}>
                             <HStack>
-                                <Button size="md" colorScheme='teal' w="100%" onClick={handleCreateTeam}>Criar uma equipe</Button>
-                                <Button size="md" colorScheme='teal' w="100%" onClick={handleJoinTeam}>Entrar em uma equipe</Button>
+                                <Button size="md" colorScheme='teal' w="100%" onClick={handleCreateTeam}>Create a team</Button>
+                                <Button size="md" colorScheme='teal' w="100%" onClick={handleJoinTeam}>Join a team</Button>
                             </HStack>
-                            <Button size="md" colorScheme='teal' onClick={handleSkip}>Pular Esta Etapa</Button>
+                            <Button size="md" colorScheme='teal' onClick={handleSkip}>Skip this step</Button>
                         </VStack>
                     </VStack>
                     <Image src={TeamImg} />

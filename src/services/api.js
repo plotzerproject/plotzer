@@ -1,32 +1,51 @@
 import axios from "axios";
 
 export const api = axios.create({
-    baseURL: "http://localhost:4000/api/",
+  baseURL: "http://localhost:4000/api/",
 });
 
-api.interceptors.response.use(
-    (response) => {
-        return response;
-    },
-    (err) => {
-        return new Promise((resolve, reject) => {
-            console.log(err);
-            const originalReq = err.config;
-            console.log()
-            const accessToken = localStorage.getItem("token");
-            if (err.response.status == 401 && accessToken && err.response.data.errors[0].title == "Invalid Token") {
-                const refresh_token = localStorage.getItem("refresh-token");
-                api.post("/auth/refresh-token", {
-                    refresh_token
-                }).then((response)=>{
-                    console.log("response")
-                    console.log(response)
-                }).catch((err)=>{
-                    console.log("err")
-                    console.log(err)
-                })
-
-            }
-        });
-    }
-);
+// api.interceptors.response.use(
+//   (response) => {
+//     return response;
+//   },
+//   (err) => {
+//     return new Promise((resolve, reject) => {
+//       try {
+//         const accessToken = localStorage.getItem("token");
+//         if (
+//           err.response.status == 401 &&
+//           accessToken &&
+//           err.response.data.errors[0].title == "Invalid Token"
+//         ) {
+//           let a = false;
+//           const refresh_token = localStorage.getItem("refresh-token");
+//           if (a === false) {
+//             a = true;
+//             api
+//               .post("/auth/refresh-token", {
+//                 refresh_token: JSON.parse(refresh_token),
+//               })
+//               .then((response) => {
+//                 console.log(response)
+//                 localStorage.setItem(
+//                   "refresh-token",
+//                   response.data.refresh_token
+//                 );
+//                 localStorage.setItem("token", response.data.token);
+//                 return resolve(response);
+//               })
+//               .catch((err) => {
+//                 console.log(err);
+//                 return reject(err);
+//               })
+//               .finally((res) => {
+//                 a = false;
+//               });
+//           }
+//         }
+//       } catch (error) {
+//         console.log(error);
+//       }
+//     });
+//   }
+// );

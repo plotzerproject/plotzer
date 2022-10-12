@@ -10,18 +10,14 @@ import {
   IconButton,
   Image,
   Spacer,
+  Tooltip,
   VStack,
 } from "@chakra-ui/react";
 import LogoCircle from "../../assets/logo_circle.svg";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 function NavBar() {
   const navigate = useNavigate();
-
-  async function handleChangePage(page) {
-    await navigate(page);
-  }
 
   return (
     <nav>
@@ -38,41 +34,62 @@ function NavBar() {
             boxSize="64px"
             src={LogoCircle}
             alt="Plotzer's Logo"
+            onClick={() => navigate("/dashboard")}
+            cursor="pointer"
           />
           <Divider orientation="horizontal" borderColor="gray.300" w={"32px"} />
           <VStack>
-            <IconButton
-              color={'white'}
-              variant="ghost"
-              aria-label="Chat"
-              fontSize="24px"
-              // onClick={handleChangePage("/chat")}
-              icon={<FaCommentAlt />}
-            />
+            <Tooltip label="Chat" placement="right">
+              <IconButton
+                color={"white"}
+                variant="ghost"
+                aria-label="Chat"
+                fontSize="24px"
+                onClick={() => {
+                  navigate("/chat");
+                }}
+                icon={<FaCommentAlt />}
+              />
+            </Tooltip>
             <Spacer />
-            <IconButton
-              aria-label="My Teams"
-              fontSize="24px"
-              color={'white'}
-              variant="ghost"
-              icon={<FaUserFriends />}
-            />
+            <Tooltip label="My Teams" placement="right">
+              <IconButton
+                aria-label="My Teams"
+                fontSize="24px"
+                color={"white"}
+                variant="ghost"
+                onClick={() => {
+                  navigate("/teams");
+                }}
+                icon={<FaUserFriends />}
+              />
+            </Tooltip>
             <Spacer />
-            <IconButton
-              aria-label="Calendar"
-              fontSize="24px"
-              color={'white'}
-              variant="ghost"
-              icon={<FaRegCalendarAlt />}
-            />
+            <Tooltip label="Calendar" placement="right">
+              <IconButton
+                aria-label="Calendar"
+                fontSize="24px"
+                color={"white"}
+                variant="ghost"
+                onClick={() => {
+                  navigate("/calendar");
+                }}
+                icon={<FaRegCalendarAlt />}
+              />
+            </Tooltip>
             <Spacer />
-            <IconButton
-              aria-label="Methodologies"
-              fontSize="24px"
-              color={'white'}
-              variant="ghost"
-              icon={<FaArchive />}
-            />
+            <Tooltip label="Methodologies" placement="right">
+              <IconButton
+                aria-label="Methodologies"
+                fontSize="24px"
+                color={"white"}
+                variant="ghost"
+                onClick={() => {
+                  navigate("/methodologies");
+                }}
+                icon={<FaArchive />}
+              />
+            </Tooltip>
           </VStack>
         </VStack>
       </Flex>

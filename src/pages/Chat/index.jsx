@@ -1,6 +1,9 @@
+import Base from '../../components/Base'
+
 function Chat () {
     return (
-        <>chat</>
+        <Base>
+        </Base>
     )
 }
 

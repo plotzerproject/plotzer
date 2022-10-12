@@ -28,6 +28,7 @@ import assigments from "../../utils/assigments";
 
 function Calendar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Base>
       <Tabs w="100%">
@@ -58,17 +59,13 @@ function Calendar() {
             {assigments.map((item, indice) => {
               if (item.finished === false) {
                 return <Assignment data={item} key={indice} />;
-              } else {
-                return <></>;
               }
             })}
           </TabPanel>
           <TabPanel>
-            {assigments.map((item, indice) => {
+          {assigments.map((item, indice) => {
               if (item.finished === true) {
                 return <Assignment data={item} key={indice} />;
-              } else {
-                return <></>;
               }
             })}
           </TabPanel>
