@@ -15,8 +15,28 @@ export const AuthProvider = ({ children }) => {
     // const refreshTokenLC = localStorage.getItem("refresh-token");
 
     if (tokenLC) {
-      setUser(JSON.parse(userLC));
       api.defaults.headers.common["Authorization"] = `Bearer ${JSON.parse(tokenLC)}`;
+      async function loginEffect() {
+        const response = await api.get("/user/@me")
+        console.log(response)
+        const { data } = response
+        const userData = {
+          id: data.id,
+          name: data.attributes.name,
+          email: data.attributes.email,
+          plan: {
+            id: data.attributes.plan.id,
+            purchaseDate: data.attributes.plan.purchaseDate,
+            active: data.attributes.plan.active,
+          },
+          applicationPermissions: data.attributes.applicationPermissions,
+          photo: data.attributes.photo,
+          background: data.attributes.background,
+        };
+        localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
+      }
+      loginEffect()
     } else {
       console.log("tokenlc nao encontrado");
     }
@@ -46,6 +66,8 @@ export const AuthProvider = ({ children }) => {
           active: data.attributes.plan.active,
         },
         applicationPermissions: data.attributes.applicationPermissions,
+        photo: data.attributes.photo,
+        background: data.attributes.background,
       };
 
       //set values in local storage and state
@@ -87,6 +109,8 @@ export const AuthProvider = ({ children }) => {
           id: data.data.attributes.plan.id,
           purchaseDate: data.data.attributes.plan.purchaseDate,
           active: data.data.attributes.plan.active,
+          photo: data.attributes.photo,
+          background: data.attributes.background,
         },
         applicationPermissions: data.data.attributes.applicationPermissions,
       };

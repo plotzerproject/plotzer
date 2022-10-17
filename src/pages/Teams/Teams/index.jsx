@@ -131,7 +131,6 @@ function Teams() {
                   borderWidth={"0.1px"}
                   margin="0 15px"
                   cursor={"pointer"}
-                  onClick={() => navigate(`/teams/${item._id}`)}
                 >
                   <Flex
                     w="100%"
@@ -143,6 +142,7 @@ function Teams() {
                       w="100%"
                       justifyContent={"center"}
                       h="calc(100% - 50px)"
+                    onClick={() => navigate(`/teams/${item._id}`)}
                     >
                       <Box
                         w="150px"
