@@ -23,8 +23,6 @@ function Header({ page }) {
   const { user, Logout } = useAuth();
   let navigate = useNavigate();
 
-  console.log(user)
-
   return (
     <Flex
       minWidth="max-content"

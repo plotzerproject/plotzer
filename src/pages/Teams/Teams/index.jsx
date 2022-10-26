@@ -26,6 +26,8 @@ import {
   AlertIcon,
   IconButton,
   Tooltip,
+  AlertTitle,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -48,7 +50,8 @@ function Teams() {
   const [area, setArea] = useState("");
   const [description, setDescription] = useState("");
   const [privacy, setPrivacy] = useState("");
-  const [error, setError] = useState("");
+  const [slug, setSlug] = useState("");
+  const [error, setError] = useState({});
   const [success, setSuccess] = useState(false);
 
   //modal attributes
@@ -56,7 +59,7 @@ function Teams() {
 
   async function handleCreateTeam(e) {
     e.preventDefault();
-    if (name !== "" && area !== "" && description !== "" && privacy !== "") {
+    if (name !== "" && area !== "" && description !== "" && privacy !== "" && slug !== "") {
       try {
         const response = await api.post("/team", {
           name,
@@ -70,6 +73,8 @@ function Teams() {
         setPrivacy("");
         setArea("");
         setDescription("");
+        setSlug("");
+        setError({});
 
         onClose();
 
@@ -98,17 +103,22 @@ function Teams() {
     async function getMyTeams() {
       setLoading(true);
       try {
-        const teams = await api.get("/user/teams/");
-        setMyTeams(teams.data);
+        const teams = await api.get("/user/@me/teams/");
+        setMyTeams(teams.data.data);
       } catch (error) {
-        console.log("algum erro", error);
+        if (error.response.data.errors[0].title === "ERR_USER_DOES_NOT_HAVE_TEAM") {
+          setError({
+            title: "Equipe",
+            subtitle: error.response.data.errors[0].title,
+            detail: error.response.data.errors[0].detail
+          })
+        }
       }
       setLoading(false);
     }
     getMyTeams();
   }, []);
 
-  //pegar todos as equipes DO USUARIO (aqui tao todas só msm pelo teste)
 
   return (
     <Base>
@@ -117,14 +127,25 @@ function Teams() {
           <Loading />
         ) : (
           <Flex wrap={"wrap"} overflowY="auto" maxWidth={"1090px"} w="100%">
+            {
+              Object.keys(error).length != 0 && (
+                <Alert status='error'>
+                <AlertIcon />
+                <AlertTitle>{error.title}</AlertTitle>
+                <AlertDescription>{error.detail}</AlertDescription>
+              </Alert>
+              )
+            }
+
             {myTeams.map((item, indice) => {
+              console.log(item)
               return (
                 <Box
                   w="100%"
                   maxW={"250px"}
                   h="290px"
                   bgColor={"gray.300"}
-                  key={item._id}
+                  key={item.id}
                   boxShadow="lg"
                   borderRadius={"md"}
                   borderColor="gray.400"
@@ -142,7 +163,7 @@ function Teams() {
                       w="100%"
                       justifyContent={"center"}
                       h="calc(100% - 50px)"
-                    onClick={() => navigate(`/teams/${item._id}`)}
+                      onClick={() => navigate(`/teams/${item.id}`)}
                     >
                       <Box
                         w="150px"
@@ -150,8 +171,8 @@ function Teams() {
                         bgColor="gray.500"
                         textAlign={"center"}
                       >
-                        {item.photo ? (
-                          <img src={item.photo} alt={`${item.name}'s logo`} />
+                        {item.attributes.photo ? (
+                          <img src={item.attributes.photo} alt={`${item.attributes.name}'s logo`} />
                         ) : (
                           <Heading
                             h="100%"
@@ -162,13 +183,13 @@ function Teams() {
                             fontSize="5xl"
                             as="h2"
                           >
-                            {getInitials(item.name)}
+                            {getInitials(item.attributes.name)}
                           </Heading>
                         )}
                       </Box>
                       <Text fontSize={"xl"} textAlign="center">
-                        {item.name}
-                      </Text>
+                        {item.attributes.name}
+                        </Text>
                     </VStack>
                     <HStack
                       h="50px"
@@ -289,6 +310,15 @@ function Teams() {
                         <option value="closed">Closed</option>
                         <option value="only-invites">Only Invites</option>
                       </Select>
+                    </FormControl>
+
+                    <FormControl mt={4} isRequired>
+                      <FormLabel>Slug</FormLabel>
+                      <Input
+                        placeholder="Team's slug"
+                        value={slug}
+                        onChange={(e) => setSlug(e.target.value)}
+                      />
                     </FormControl>
                   </ModalBody>
 

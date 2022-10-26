@@ -41,7 +41,7 @@ export function ReactRoutes() {
         return authenticated ? <Item /> : <Navigate to="/login"/>
       };
 
-      const SignUpMiddleware = ({ Item }) => {
+      const SignUpMiddleware = ({ Item }) => {//desconsidera, sao só testes
         const { authenticated } = useAuth();
       
         return authenticated ? <Item /> : <Navigate to="/login"/>

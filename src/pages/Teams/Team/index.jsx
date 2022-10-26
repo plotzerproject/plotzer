@@ -7,21 +7,21 @@ import Loading from "../../Loading";
 
 function Team() {
   const { id_team } = useParams();
-  console.log(id_team);
   const [team, setTeam] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function getTeam() {
       setLoading(true);
       try {
         const t = await api.get(`/team/${id_team}`);
+        console.log(t)
         setTeam(t.data.data);
-        console.log(team);
-      } catch (error) {
-      } finally {
         setLoading(false);
+      } catch (error) {
+        console.log(error)
       }
+      setLoading(false);
     }
     getTeam();
   }, []);
@@ -31,7 +31,7 @@ function Team() {
     return (
         <Base title={team.attributes.name}>
           <Heading> Equipe "{team.attributes.name}"</Heading>
-          {/* <Text>é isso :)</Text> */}
+          <Text>é isso :)</Text>
         </Base>
       );
   }

@@ -18,20 +18,19 @@ export const AuthProvider = ({ children }) => {
       api.defaults.headers.common["Authorization"] = `Bearer ${JSON.parse(tokenLC)}`;
       async function loginEffect() {
         const response = await api.get("/user/@me")
-        console.log(response)
         const { data } = response
         const userData = {
-          id: data.id,
-          name: data.attributes.name,
-          email: data.attributes.email,
+          id: data.data.id,
+          name: data.data.attributes.name,
+          email: data.data.attributes.email,
           plan: {
-            id: data.attributes.plan.id,
-            purchaseDate: data.attributes.plan.purchaseDate,
-            active: data.attributes.plan.active,
+            id: data.data.attributes.plan.id,
+            purchaseDate: data.data.attributes.plan.purchaseDate,
+            active: data.data.attributes.plan.active,
           },
-          applicationPermissions: data.attributes.applicationPermissions,
-          photo: data.attributes.photo,
-          background: data.attributes.background,
+          applicationPermissions: data.data.attributes.applicationPermissions,
+          photo: data.data.attributes.photo,
+          background: data.data.attributes.background,
         };
         localStorage.setItem("user", JSON.stringify(userData));
         setUser(userData);

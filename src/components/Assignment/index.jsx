@@ -3,6 +3,8 @@ import { FaClock } from "react-icons/fa";
 import { capitalizeFirstLetter } from "../../utils/strings";
 
 function Assignment(data) {
+  const assignment = data.data
+
   const colors = {
     free: 'green.100',
     warn: 'yellow.100',
@@ -13,10 +15,14 @@ function Assignment(data) {
   }
   const fnVerifyTime = () => {
     //se ta no prazo
-    if(colors) {
-      return [colors.free, `Send until ${data.limit}`, colors.freeIcon]
-    } else if(colors) {
-      return [colors.warn, `Send until ${data.limit}`, colors.warnIcon]
+    const date = new Date()
+    const dateLimit = new Date(assignment.attributes.assignment.dateLimit)
+    const diffInMs = dateLimit - date
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+    if(date > dateLimit) {
+      return [colors.free, `Send until ${dateLimit.getDate()}/${dateLimit.getMonth()}/${dateLimit.getFullYear()}`, colors.freeIcon]
+    } else if(diffInDays < 5) {
+      return [colors.warn, `Send until ${dateLimit.getDate()}/${dateLimit.getMonth()}/${dateLimit.getFullYear()}`, colors.warnIcon]
     } else {
       return [colors.late, `You're late!`, colors.lateIcon]
     }
@@ -27,13 +33,13 @@ function Assignment(data) {
     <>
       <Flex h="70px" w="100%" bgColor={verifyTime[0]} justifyContent="space-between" alignItems={'center'} p="16px" borderRadius={'md'}>
         <HStack>
-          <Box w="50px" h="50px" bgColor={'gray.400'} bgImage={data.data.img ? data.data.img : ""} bgSize='100% 100%' bgPosition={'center'}/>
+          <Box w="50px" h="50px" bgColor={'gray.400'} bgImage={assignment.attributes.assignment.photo ? assignment.attributes.assignment.photo : ""} bgSize='100% 100%' bgPosition={'center'}/>
           <VStack alignItems={'center'}>
-            <Heading fontSize={'md'} lineHeight={'1'}>{capitalizeFirstLetter(data.data.title)}</Heading>
+            <Heading fontSize={'md'} lineHeight={'1'}>{capitalizeFirstLetter(assignment.attributes.assignment.title)}</Heading>
             {
-              data.data.subtitle ? (
-                <Text w="100%" fontSize={'sm'} lineHeight={'1'} fontWeight='normal'>{data.data.subtitle.team ? capitalizeFirstLetter(data.data.subtitle.team) : capitalizeFirstLetter(data.data.subtitle.area)}</Text>
-              ) : <></>
+              typeof assignment.attributes.team == "object" && (
+                <Text w="100%" fontSize={'sm'} lineHeight={'1'} fontWeight='normal'>{capitalizeFirstLetter(assignment.attributes.team.name)}</Text>
+              )
             }
           </VStack>
         </HStack>
