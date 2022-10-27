@@ -27,7 +27,6 @@ import { useEffect, useState } from "react";
 import Assignment from "../../components/Assignment";
 import Base from "../../components/Base";
 import { api } from "../../services/api";
-// import assigments from "../../utils/assigments";
 import Loading from "../Loading";
 
 function Calendar() {
@@ -43,7 +42,6 @@ function Calendar() {
       try {
         const req = await api.get("/assignment/@me/my-assignments/");
         setAssignments(req.data.data)
-        console.log(req)
         setLoading(false)
       } catch (error) {
         console.log(error)
@@ -53,9 +51,9 @@ function Calendar() {
             subtitle: error.response.data.errors[0].title,
             detail: error.response.data.errors[0].detail
           })
+          setLoading(false)
         }
       }
-      setLoading(false);
     }
 
     getMyAssignments()
@@ -93,17 +91,26 @@ function Calendar() {
           <TabPanels>
             <TabPanel>
               {
-                errorGetAssignment && errorGetAssignment.subtitle === "ERR_ASSIGNMENT_NOT_FOUND" ? 
-                <Heading>{errorGetAssignment.detail}</Heading> : 
+                assignments ? 
                 assignments.map((item, indice)=>{
                   if(item.attributes.status == "received") {
                     return <Assignment data={item} key={item.id} />
                   }
-                })
+                }) :
+                <Heading>{errorGetAssignment.detail}</Heading>
               }
             </TabPanel>
             <TabPanel>
             {
+                assignments ? 
+                assignments.map((item, indice)=>{
+                  if(item.attributes.status == "sent" || item.attributes.status == "returned") {
+                    return <Assignment data={item} key={item.id} />
+                  }
+                }) :
+                <Heading>{errorGetAssignment.detail}</Heading>
+              }
+            {/* {
                 errorGetAssignment && errorGetAssignment.subtitle === "ERR_ASSIGNMENT_NOT_FOUND" ? 
                 <Heading>{errorGetAssignment.detail}</Heading> : 
                 assignments.map((item, indice)=>{
@@ -111,7 +118,7 @@ function Calendar() {
                     return <Assignment data={item} key={item.id} />
                   }
                 })
-              }
+              } */}
             </TabPanel>
           </TabPanels>
         </Tabs>

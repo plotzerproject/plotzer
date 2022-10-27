@@ -20,6 +20,8 @@ import Offers from "./pages/Offers";
 import { useAuth } from "./hooks/useAuth";
 import Profile from "./pages/Profile";
 import Team from "./pages/Teams/Team";
+import AssignmentSingle from "./pages/Assignment";
+import TeamMembers from "./pages/Teams/TeamMembers";
 
 // function Private1({ children, auth }) {
 //     if (!auth) {
@@ -74,8 +76,11 @@ export function ReactRoutes() {
                 <Route path="/profile" element={<Private Item={Profile}/>} />
                 <Route path="/settings" element={<Private Item={Profile}/>} />
 
+                <Route path="/assignment/:id_assignment" element={<Private Item={AssignmentSingle}/>} />
+
                 <Route path="/teams" element={<Private Item={Teams}/>} />
                 <Route path="/teams/:id_team" element={<Private Item={Team}/>} />
+                <Route path="/teams/:id_team/members" element={<Private Item={TeamMembers}/>} />
             </Routes>
         </>
     )

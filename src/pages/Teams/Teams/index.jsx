@@ -61,7 +61,7 @@ function Teams() {
     e.preventDefault();
     if (name !== "" && area !== "" && description !== "" && privacy !== "" && slug !== "") {
       try {
-        const response = await api.post("/team", {
+        await api.post("/team", {
           name,
           area,
           description,
@@ -84,7 +84,6 @@ function Teams() {
           setSuccess(false);
         }, 60 * 500);
 
-        console.log(response);
       } catch (err) {
         console.log(err);
         setError(err);
@@ -128,7 +127,7 @@ function Teams() {
         ) : (
           <Flex wrap={"wrap"} overflowY="auto" maxWidth={"1090px"} w="100%">
             {
-              Object.keys(error).length != 0 && (
+              Object.keys(error).length !== 0 && (
                 <Alert status='error'>
                 <AlertIcon />
                 <AlertTitle>{error.title}</AlertTitle>
@@ -138,7 +137,6 @@ function Teams() {
             }
 
             {myTeams.map((item, indice) => {
-              console.log(item)
               return (
                 <Box
                   w="100%"

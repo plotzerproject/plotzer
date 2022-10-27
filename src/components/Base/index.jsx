@@ -6,6 +6,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { capitalizeFirstLetter } from "../../utils/strings";
 
 function Base({ children, padding, title }) {
+
     let { user } = useAuth();
 
     const location = useLocation()
