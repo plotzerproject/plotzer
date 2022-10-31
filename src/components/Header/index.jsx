@@ -32,6 +32,9 @@ function Header({ page }) {
       h="80px"
       w={"100%"}
       p="0 20px"
+      // pos="fixed"
+      // left={'0'}
+      // top={'0'}
     >
       <Box p="2">
         <Heading size="md" color={"white"} lineHeight="6" fontWeight="normal">
@@ -46,6 +49,7 @@ function Header({ page }) {
           variant={'ghost'}
           color='white'
           icon={<BellIcon />}
+          onClick={()=>alert("Próximas Atualizações")}
         />
       </Tooltip>
       <Tooltip label="Color Theme" placement="bottom">
@@ -55,6 +59,7 @@ function Header({ page }) {
           variant={'ghost'}
           color='white'
           icon={<MoonIcon />}
+          onClick={()=>alert("Próximas Atualizações")}
         />
       </Tooltip>
       <Divider orientation="vertical" borderColor="gray.300" h={"32px"} />
@@ -87,9 +92,10 @@ function Header({ page }) {
         <MenuList>
           <MenuItem
             icon={<FiSettings fontSize={"20px"} />}
-            onClick={() => {
-              navigate("/settings");
-            }}
+            // onClick={() => {
+            //   navigate("/settings");
+            // }}
+            onClick={()=>alert("Próximas Atualizações")}
           >
             Settings
           </MenuItem>

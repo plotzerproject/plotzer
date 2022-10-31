@@ -1,19 +1,30 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
   Button,
   ButtonGroup,
   Divider,
   Flex,
+  FormControl,
+  FormLabel,
   Heading,
   HStack,
   Icon,
   Image,
   Input,
-  InputGroup,
-  InputRightElement,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Text,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 
@@ -30,15 +41,24 @@ import "swiper/css/navigation";
 import Base from "../../../components/Base";
 import TeamInfo from "../../../components/TeamInfo";
 import Loading from "../../Loading";
+import InputChat from "../../../components/InputChat";
+import NextAssignments from "../../../components/NextAssignments";
 
 import { api } from "../../../services/api";
 
 import "./styles.css";
-import NextAssignments from "../../../components/NextAssignments";
 
 import MessageNotFoundImg from "../../../assets/team_img_msg_not_found.png";
 
+import { Skeleton } from '@chakra-ui/react'
+import { formatDate } from "../../../utils/date";
+
 function Team() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenFixed, onOpen: onOpenFixed, onClose: onCloseFixed } = useDisclosure();
+  const [titleFixed, setTitleFixed] = useState("")
+  const [contentFixed, setContentFixed] = useState("")
+
   const { id_team } = useParams();
   const [team, setTeam] = useState({});
   const [assignments, setAssignments] = useState([])
@@ -46,6 +66,11 @@ function Team() {
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState({})
+
+  const [me, setMe] = useState({})
+  // const [error, setError] = useState({})
+
+  let navigate = useNavigate();
 
   const [msgs, setMsgs] = useState([]);
 
@@ -60,88 +85,101 @@ function Team() {
     return [["User", "Reputation"], ...result];
   };
 
-  useEffect(() => {
-    async function getTeam() {
-      setLoading(true);
-      try {
-        const t = await api.get(`/team/${id_team}?fixed=true`);
-        setTeam(t.data.data);
+  async function getTeam() {
+    try {
+      const t = await api.get(`/team/${id_team}?fixed=true`);
+      setTeam(t.data.data);
 
-        const data = [
-          { title: "Reputation", value: t.data.data.attributes.stats },
-          {
-            title: "Negative",
-            value: 100 - t.data.data.attributes.stats,
-          },
-        ];
-        const statsData = loadData(data);
-        setStats(statsData);
+      const userLC = JSON.parse(localStorage.getItem("user"))
+      const myInfo = t.data.data.attributes.members.find((u)=>u.id === userLC.id)
+      setMe(myInfo)
 
-        setFixed([
-          {
-            id: "1",
-            author: "1",
-            title: "Teste salve 1",
-            content: "lorem ipsum dolor sit amet",
-          },
-          {
-            id: "2",
-            author: "1",
-            title: "Teste salve 2",
-            content: "lorem ipsum dolor sit amet",
-          },
-          {
-            id: "3",
-            author: "1",
-            title: "Teste salve 3",
-            content: "lorem ipsum dolor sit amet",
-          },
-          {
-            id: "4",
-            author: "1",
-            title: "Teste salve 4",
-            content: "lorem ipsum dolor sit amet",
-          },
-        ]);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-      setLoading(false);
+      const data = [
+        { title: "Reputation", value: t.data.data.attributes.stats },
+        {
+          title: "Negative",
+          value: 100 - t.data.data.attributes.stats,
+        },
+      ];
+      const statsData = loadData(data);
+      setStats(statsData);
+
+      setFixed(t.data.data.attributes.fixed);
+    } catch (error) {
+      console.log(error);
     }
+  }
 
-    async function getMyAssignments() {
-      setLoading(true);
+  async function getMyAssignments() {
+    try {
+      const req = await api.get(`/assignment/@me/team/${id_team}`);
+      setAssignments(req.data.data)
+    } catch (error) {
+      console.log(error)
+      if (error.response.data.errors[0].title !== "ERR_ASSIGNMENT_NOT_FOUND") {
+        setError(error.response.data.errors[0])
+      }
+      // if (error.response.data.errors[0].title === "ERR_ASSIGNMENT_NOT_FOUND") {
+      //   console.log
+      //   setError({
+      //     title: "Assignment",
+      //     subtitle: error.response.data.errors[0].title,
+      //     detail: error.response.data.errors[0].detail
+      //   })
+      // }
+    }
+  }
+
+  async function handleAddFixed(e){
+    e.preventDefault()
+    if(titleFixed !== "" && contentFixed !== "") {
       try {
-        const req = await api.get(`/assignment/@me/team/${id_team}`);
-        setAssignments(req.data.data)
-        setLoading(false)
+        const data = {
+          title: titleFixed,
+          content: contentFixed
+        }
+        const a = await api.post(`/team/${id_team}/fixed`, data)
+        setTitleFixed("")
+        setContentFixed("")
+        onClose()
+        await getTeam()
+        console.log(a)
       } catch (error) {
         console.log(error)
-        if (error.response.data.errors[0].title === "ERR_ASSIGNMENT_NOT_FOUND") {
-          setError({
-            title: "Assignment",
-            subtitle: error.response.data.errors[0].title,
-            detail: error.response.data.errors[0].detail
-          })
-          setLoading(false)
-        }
       }
+    } else {
+      alert("campos vazios")
     }
+  }
 
-    getTeam();
-    getMyAssignments()
+  const [fixedSelected, setFixedSelected] = useState({})
+
+  async function getFixedModal(id) {
+    const att = team.attributes.fixed.find((f)=>f._id == id)
+    setFixedSelected(att)
+    onOpenFixed()
+  }
+
+  useEffect(() => {
+    async function exec(){
+      setLoading(true)
+      await getTeam();
+      await getMyAssignments()
+      setLoading(false)
+    }
+    exec()
   }, []);
 
-  if (loading) {
+  if (loading && Object.keys(team) !== 0) {
     return <Loading />;
   } else {
     return (
-      <Base title={team.attributes.name} padding={"0"}>
+      <Base title={team.attributes.name || "Teste"} padding={"0"}>
         <VStack w={"75%"} h="100%">
-          <Flex
+        <Skeleton height='250px' w="100%" isLoaded={!loading}>
+        <Flex
             w="100%"
-            h="300px"
+            h="250px"
             p="30px"
             pos={"relative"}
             backgroundColor={"gray.300"}
@@ -149,19 +187,23 @@ function Team() {
             backgroundRepeat="no-repeat"
             backgroundSize={"cover"}
           >
-            <TeamInfo team={team} />
+            <TeamInfo team={team} openMember={true} />
             <ButtonGroup pos={"absolute"} bottom="15px" right="30px">
-              <Button colorScheme="teal">Kanban</Button>
-              <Button colorScheme="teal">Stats</Button>
+              {/* <Button colorScheme="teal">Kanban</Button> */}
+              <Button colorScheme="teal" onClick={()=>navigate(`/teams/${id_team}/stats`)}>Stats</Button>
+              {me && me.userPermissions >= 2 && <Button colorScheme="teal" onClick={()=>navigate(`/teams/${id_team}/assignments/`)}>Assignments</Button>} 
+              {me && me.userPermissions >= 4 && <Button colorScheme="teal" onClick={()=>alert("editar")}>Edit Team</Button>} 
+              {me && me.userPermissions >= 4 && <Button colorScheme="teal" onClick={()=>alert("membros")}>See Requests</Button>} 
             </ButtonGroup>
           </Flex>
+        </Skeleton>
           <VStack w="100%" p="0px 15px 0px 15px" h="100%">
-            <HStack w="100%" h="100%">
+            <HStack w="100%" h="100%" alignItems={'flex-start'}>
               <Swiper
-                // navigation={true}
+                navigation={true}
                 pagination={true}
-                // modules={[Navigation, Pagination]}
-                modules={[Pagination]}
+                modules={[Navigation, Pagination]}
+                // modules={[Pagination]}
                 className="mySwiper"
               >
                 <SwiperSlide>
@@ -173,6 +215,9 @@ function Team() {
                   />
                 </SwiperSlide>
                 <SwiperSlide>Slide 2</SwiperSlide>
+                <SwiperSlide>Slide 3</SwiperSlide>
+                <SwiperSlide>Slide 4</SwiperSlide>
+                <SwiperSlide>Slide 5</SwiperSlide>
               </Swiper>
               <Flex
                 flexDir={"column"}
@@ -181,33 +226,43 @@ function Team() {
                 borderRadius="md"
                 p="20px"
               >
-                <HStack w="100%">
+                <HStack w="100%" justify={'space-between'}>
+                  <HStack>
                   <Heading fontSize={"2xl"} lineHeight="7">
                     Fixed's
                   </Heading>
                   <Icon as={FaThumbtack} fontSize="24px" color={"#D82525"} />
+                  </HStack>
+                  {me && me.userPermissions >= 4 && <Button colorScheme="teal" onClick={onOpen}>Add Fixed</Button>} 
                 </HStack>
                 <VStack w="100%" mt={"20px"}>
-                  {fixed.length !== 0 &&
-                    fixed.slice(0, 4).map((f) => {
+                  {fixed.length !== 0 ?
+    
+                    fixed.slice(0, 4).map((f, k) => {
                       return (
                         <Flex
-                          key={f.id}
+                          key={f._id}
                           w="100%"
                           h="45px"
                           backgroundColor={"white"}
                           borderRadius="md"
                           justify={"center"}
                           align="center"
+                          cursor={'pointer'}
+                          onClick={()=>getFixedModal(f._id)}
                         >
                           <Text fontWeight={"bold"}>{f.title}</Text>
                         </Flex>
                       );
-                    })}
+                    })
+                     : <Alert status='error'>
+                    <AlertIcon />
+                    <AlertDescription>Nenhum fixado encontrado</AlertDescription>
+                  </Alert>}
                 </VStack>
               </Flex>
             </HStack>
-            <NextAssignments assignments={assignments}/>
+            <NextAssignments assignments={assignments} error={Boolean(assignments)}/>
           </VStack>
         </VStack>
         <VStack w={"25%"} bgColor={"gray.100"} h="100%">
@@ -215,7 +270,7 @@ function Team() {
             w="100%"
             h="60px"
             justify={"space-between"}
-            p="12px 12px 0 12px"
+            p="12px 12px 6px 12px"
           >
             <HStack>
               <Icon as={FaHashtag} fontSize="24px" color={"black"} />
@@ -234,9 +289,9 @@ function Team() {
             alignItems="center"
             justify={"center"}
           >
-            {msgs.length !== 0 ? (
-              <></>
-            ) : (
+            {msgs.length !== 0 ? msgs.map((msg)=>{
+                <>salve</>
+              }) : (
               <VStack>
                 <Image src={MessageNotFoundImg} alt="Messages not found" />
                 <Heading fontSize={"lg"} as={"h4"} fontWeight="medium">
@@ -248,22 +303,68 @@ function Team() {
               </VStack>
             )}
 
-            <InputGroup
-              size="lg"
-              w="90%"
-              pos={"absolute"}
-              left="20px"
-              bottom="15px"
-            >
-              <Input pr="4.5rem" type={"text"} placeholder="Write a message" />
-              <InputRightElement width="4.5rem">
-                <Button size="lg" colorScheme="teal" h="100%">
-                  Enviar
-                </Button>
-              </InputRightElement>
-            </InputGroup>
+            <InputChat />
           </VStack>
         </VStack>
+        <Modal isCentered isOpen={isOpen} onClose={onClose} size="lg">
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Create a team</ModalHeader>
+                    <Divider w="100%" />
+                    <ModalCloseButton />
+                    <form onSubmit={handleAddFixed}>
+                        <ModalBody pb={6}>
+                            <FormControl isRequired>
+                                <FormLabel>Title</FormLabel>
+                                <Input
+                                    placeholder="Fixed's title"
+                                    type={'text'}
+                                    value={titleFixed}
+                                    onChange={(e) => setTitleFixed(e.target.value)}
+                                />
+                            </FormControl>
+                            <FormControl isRequired>
+                                <FormLabel>Title</FormLabel>
+                                <Input
+                                    placeholder="Fixed's content"
+                                    type={'text'}
+                                    value={contentFixed}
+                                    onChange={(e) => setContentFixed(e.target.value)}
+                                />
+                            </FormControl>
+                        </ModalBody>
+
+                        <ModalFooter>
+                            <Button colorScheme="blue" mr={3} type="submit">
+                                Save
+                            </Button>
+                            <Button onClick={onClose} textColor="white">
+                                Cancel
+                            </Button>
+                        </ModalFooter>
+                    </form>
+                </ModalContent>
+            </Modal>
+            { Object.keys(fixedSelected) !== 0 &&
+              <Modal isCentered isOpen={isOpenFixed} onClose={onCloseFixed} size="lg">
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>{fixedSelected.title}</ModalHeader>
+                    <Divider w="100%" />
+                    <ModalCloseButton />
+                        <ModalBody pb={6}>
+                          <Text>{fixedSelected.content}</Text>
+                        </ModalBody>
+
+                        <ModalFooter justifyContent={'space-between'}>
+                          <Text>{formatDate(fixedSelected.updatedAt)}</Text>
+                            <Button onClick={onCloseFixed} textColor="white">
+                                Cancel
+                            </Button>
+                        </ModalFooter>
+                </ModalContent>
+            </Modal>
+          }
       </Base>
     );
   }

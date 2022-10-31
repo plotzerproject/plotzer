@@ -22,6 +22,8 @@ import Profile from "./pages/Profile";
 import Team from "./pages/Teams/Team";
 import AssignmentSingle from "./pages/Assignment";
 import TeamMembers from "./pages/Teams/TeamMembers";
+import TeamStats from "./pages/Teams/TeamStats";
+import TeamAssignments from "./pages/Teams/Assignments";
 
 // function Private1({ children, auth }) {
 //     if (!auth) {
@@ -80,7 +82,9 @@ export function ReactRoutes() {
 
                 <Route path="/teams" element={<Private Item={Teams}/>} />
                 <Route path="/teams/:id_team" element={<Private Item={Team}/>} />
+                <Route path="/teams/:id_team/assignments" element={<Private Item={TeamAssignments}/>} />
                 <Route path="/teams/:id_team/members" element={<Private Item={TeamMembers}/>} />
+                <Route path="/teams/:id_team/stats" element={<Private Item={TeamStats}/>} />
             </Routes>
         </>
     )

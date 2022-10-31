@@ -27,6 +27,9 @@ function NavBar() {
         width={"80px"}
         h="100vh"
         bgColor={"blue.400"}
+        // pos="fixed"
+        // left={'0'}
+        // top={'0'}
       >
         <VStack marginTop={"16px"}>
           <Image

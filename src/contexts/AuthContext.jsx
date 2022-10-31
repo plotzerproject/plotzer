@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    const userLC = localStorage.getItem("user");
+    // const userLC = localStorage.getItem("user");
     const tokenLC = localStorage.getItem("token");
     // const refreshTokenLC = localStorage.getItem("refresh-token");
 
@@ -69,19 +69,15 @@ export const AuthProvider = ({ children }) => {
         background: data.attributes.background,
       };
 
+      //define the default auth
+      api.defaults.headers.common["Authorization"] = `Bearer ${data.tokens.token}`;
+
       //set values in local storage and state
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("token", JSON.stringify(data.tokens.token));
       // localStorage.setItem("refresh-token", JSON.stringify(data.tokens.refresh_token));
 
-      //define the default auth
-      api.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${data.tokens.token}`;
-
-      //redirect
-      navigate("/dashboard", { replace: true });
     } catch (error) {
       //todo
       console.log('login ', error)

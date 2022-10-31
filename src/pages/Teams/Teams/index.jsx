@@ -28,6 +28,7 @@ import {
   Tooltip,
   AlertTitle,
   AlertDescription,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -45,7 +46,7 @@ function Teams() {
 
   const navigate = useNavigate();
 
-  //modal data
+  //modal create data
   const [name, setName] = useState("");
   const [area, setArea] = useState("");
   const [description, setDescription] = useState("");
@@ -54,19 +55,29 @@ function Teams() {
   const [error, setError] = useState({});
   const [success, setSuccess] = useState(false);
 
+  const [myTeams, setMyTeams] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  //modal open fixed
+  const [teamSelected, setTeamSelected] = useState({})
+
   //modal attributes
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenFixedModal, onOpen: openFixedModal, onClose: closeFixedModal } = useDisclosure();
 
   async function handleCreateTeam(e) {
     e.preventDefault();
     if (name !== "" && area !== "" && description !== "" && privacy !== "" && slug !== "") {
       try {
-        await api.post("/team", {
+        const res = await api.post("/team", {
           name,
           area,
           description,
           privacy,
+          slug
         });
+
+        console.log(res)
         setSuccess(true);
 
         setName("");
@@ -78,46 +89,47 @@ function Teams() {
 
         onClose();
 
-        alert("Created!");
-        //todo
-        setTimeout(() => {
-          setSuccess(false);
-        }, 60 * 500);
+        // getMyTeams()
+        navigate(`/teams/${res.data.data.id}`)
 
       } catch (err) {
         console.log(err);
         setError(err);
-        alert(error);
+        // console.log
       }
     } else {
       setError("campos vazios");
-      alert(error);
+      alert("campos vazios");
     }
   }
 
-  const [myTeams, setMyTeams] = useState([]);
-  const [loading, setLoading] = useState(false);
+  async function getMyTeams() {
+    setLoading(true);
+    try {
+      const teamsReq = await api.get("/user/@me/teams/");
+      setMyTeams(teamsReq.data.data);
+    } catch (error) {
+      if (error.response.data.errors[0].title === "ERR_USER_DOES_NOT_HAVE_TEAM") {
+        setError({
+          title: "Equipe",
+          subtitle: error.response.data.errors[0].title,
+          detail: error.response.data.errors[0].detail
+        })
+      }
+    }
+    setLoading(false);
+  }
 
   useEffect(() => {
-    async function getMyTeams() {
-      setLoading(true);
-      try {
-        const teams = await api.get("/user/@me/teams/");
-        setMyTeams(teams.data.data);
-      } catch (error) {
-        if (error.response.data.errors[0].title === "ERR_USER_DOES_NOT_HAVE_TEAM") {
-          setError({
-            title: "Equipe",
-            subtitle: error.response.data.errors[0].title,
-            detail: error.response.data.errors[0].detail
-          })
-        }
-      }
-      setLoading(false);
-    }
     getMyTeams();
   }, []);
 
+  async function openFixed(id) {
+    setTeamSelected({})
+    const t = myTeams.find((t) => t.id === id)
+    setTeamSelected(t)
+    openFixedModal()
+  }
 
   return (
     <Base>
@@ -125,22 +137,23 @@ function Teams() {
         {loading ? (
           <Loading />
         ) : (
-          <Flex wrap={"wrap"} overflowY="auto" maxWidth={"1090px"} w="100%">
-            {
+          <Flex flexWrap={'wrap'} margin={'0 auto'} w="100%" >
+            {/* {
               Object.keys(error).length !== 0 && (
                 <Alert status='error'>
-                <AlertIcon />
-                <AlertTitle>{error.title}</AlertTitle>
-                <AlertDescription>{error.detail}</AlertDescription>
-              </Alert>
+                  <AlertIcon />
+                  <AlertTitle>{error.title}</AlertTitle>
+                  <AlertDescription>{error.detail}</AlertDescription>
+                </Alert>
               )
-            }
+            } */}
 
             {myTeams.map((item, indice) => {
               return (
                 <Box
-                  w="100%"
-                  maxW={"250px"}
+                  // w="100%"
+                  // maxW={"250px"}
+                  w="250px"
                   h="290px"
                   bgColor={"gray.300"}
                   key={item.id}
@@ -187,7 +200,7 @@ function Teams() {
                       </Box>
                       <Text fontSize={"xl"} textAlign="center">
                         {item.attributes.name}
-                        </Text>
+                      </Text>
                     </VStack>
                     <HStack
                       h="50px"
@@ -196,7 +209,7 @@ function Teams() {
                       borderTop={"1px solid black"}
                       padding="10px 10px 5px 10px"
                     >
-                      <Tooltip label="Settings" placement="bottom">
+                      {/* <Tooltip label="Settings" placement="bottom">
                         <IconButton
                           variant="outline"
                           colorScheme="teal"
@@ -204,7 +217,7 @@ function Teams() {
                           fontSize={"24px"}
                           icon={<SettingsIcon />}
                         />
-                      </Tooltip>
+                      </Tooltip> */}
                       <HStack>
                         <Tooltip label="See Members" placement="bottom">
                           <IconButton
@@ -213,6 +226,7 @@ function Teams() {
                             aria-label="See Members"
                             fontSize={"24px"}
                             icon={<FaUserFriends />}
+                            onClick={() => { navigate(`/teams/${item.id}/members`) }}
                           />
                         </Tooltip>
                         <Tooltip label="Fixed" placement="bottom">
@@ -221,6 +235,7 @@ function Teams() {
                             colorScheme="teal"
                             aria-label="Fixed"
                             fontSize={"24px"}
+                            onClick={() => openFixed(item.id)}
                             icon={<BsPinAngleFill />}
                           />
                         </Tooltip>
@@ -229,7 +244,35 @@ function Teams() {
                   </Flex>
                 </Box>
               );
-            })}
+            })
+            }
+
+            <Box
+              w="100%"
+              maxW={"250px"}
+              h="290px"
+              bgColor={"gray.300"}
+              borderRadius={"md"}
+              borderColor="gray.400"
+              borderWidth={"0.1px"}
+              margin="0 15px"
+              cursor={"pointer"}
+              onClick={() => alert("Proximas atualizações")}
+            >
+              <Flex
+                w="100%"
+                h="100%"
+                justifyContent={"space-between"}
+                flexDir="column"
+              >
+                <VStack w="100%" justifyContent={"center"} h="100%">
+                  <Box w="150px" h="150px">
+                    <Icon as={FaPlusSquare} fontSize="150px" />
+                  </Box>
+                  <Heading fontSize={"xl"}>Join a team</Heading>
+                </VStack>
+              </Flex>
+            </Box>
             <Box
               w="100%"
               maxW={"250px"}
@@ -256,6 +299,40 @@ function Teams() {
                 </VStack>
               </Flex>
             </Box>
+            {
+              Object.keys(teamSelected).length !== 0 && <Modal isOpen={isOpenFixedModal} onClose={closeFixedModal} isCentered>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>{teamSelected.attributes.name} Fixed's</ModalHeader>
+                  <Divider w="100%" />
+                  <ModalCloseButton />
+                  <ModalBody>
+                    {
+                      Object.keys(teamSelected.attributes.fixed).length !== 0 ? teamSelected.attributes.fixed.slice(0, 6).map((f) => {
+                        return (
+                          <HStack key={f._id} w="100%" h="50px" bg={'gray.300'} mt="10px" p="8px" borderRadius={'4px'} boxShadow='md'>
+                            <Text>{f.title}</Text>
+                          </HStack>
+                        )
+                      }) :
+                        <Alert status='error'>
+                          <AlertIcon />
+                          <AlertDescription>Fixed's not found.</AlertDescription>
+                        </Alert>
+                    }
+                  </ModalBody>
+
+                  <ModalFooter justifyContent={'space-between'}>
+                    <ButtonGroup>
+                      <Button variant={'ghost'} colorScheme="blue" mr={3} onClick={closeFixedModal}>
+                        Close
+                      </Button>
+                    </ButtonGroup>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+            }
+
             <Modal isCentered isOpen={isOpen} onClose={onClose} size="lg">
               {success && (
                 <Alert status="success" variant="subtle">
@@ -265,10 +342,10 @@ function Teams() {
               )}
               <ModalOverlay />
               <ModalContent>
-                <ModalHeader>Create a team</ModalHeader>
-                <Divider w="100%" />
-                <ModalCloseButton />
                 <form onSubmit={handleCreateTeam}>
+                  <ModalHeader>Create a team</ModalHeader>
+                  <Divider w="100%" />
+                  <ModalCloseButton />
                   <ModalBody pb={6}>
                     <FormControl isRequired>
                       <FormLabel>Name</FormLabel>

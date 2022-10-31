@@ -5,7 +5,7 @@ import NavBar from "../../components/NavBar";
 import { useAuth } from "../../hooks/useAuth";
 import { capitalizeFirstLetter } from "../../utils/strings";
 
-function Base({ children, padding, title }) {
+function Base({ children, padding, title, direction }) {
 
     let { user } = useAuth();
 
@@ -14,11 +14,11 @@ function Base({ children, padding, title }) {
     page = capitalizeFirstLetter(page)
 
     return (
-        <Flex>
+        <Flex w="100%" h="100%">
             <NavBar />
             <Flex w="100%" flexDirection={"column"}>
-                <Header page={title || page} user={user} />
-                <Flex h="100%" w="100%" p={padding || "24px"}>
+                <Header page={title || page} user={user}/>
+                <Flex h="100%" w="100%" maxW="100%" p={padding || "24px"} flexDirection={direction} overflowX='hidden'>
                     {children}
                 </Flex>
             </Flex>

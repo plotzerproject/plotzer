@@ -43,7 +43,7 @@ function LogIn() {
         //validar o email e senha com yup
         if (email !== "" && password !== "") {
             await Login(email, password)
-            // navigate("/dashboard", { replace: true });
+            navigate("/dashboard", { replace: true });
         } else {
             alert("Campos vazios")
         }

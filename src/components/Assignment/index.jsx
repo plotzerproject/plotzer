@@ -28,7 +28,7 @@ function Assignment(data) {
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
     if(assignment.attributes.status == "received") {
       if(date > dateLimit) {
-        return [colors.free, `Send until ${dateLimit.getDate()}/${dateLimit.getMonth()}/${dateLimit.getFullYear()}`, colors.freeIcon]
+        return [colors.free, `Send until ${dateLimit.getDate()}/${dateLimit.getMonth() + 1}/${dateLimit.getFullYear()}`, colors.freeIcon]
       } else if(diffInDays < 5) {
         return [colors.warn, `Send until ${dateLimit.getDate()}/${dateLimit.getMonth()}/${dateLimit.getFullYear()}`, colors.warnIcon]
       } else {
