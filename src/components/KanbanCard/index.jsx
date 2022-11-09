@@ -78,7 +78,7 @@ function KanbanCard({ card, getCards }) {
                 {
                     card.attributes.topics.map((c, key) => {
                         return <HStack key={c.id} w="100%" bgColor={c.color ? c.color : 'gray.300'} p="15px" fontSize={'lg'} borderRadius='md' justifyContent={'space-between'}>
-                            <Text fontSize={'lg'} id={`topic-${c.id}`}>{c.title}</Text>
+                            <Text fontSize={'lg'} id={`topic-${c.id}`}>{c.title || c.content}</Text>
                             {
                                 card.attributes.isAssignment ? <Tooltip label="Open Assignment" placement="right">
                                     <IconButton
@@ -110,33 +110,25 @@ function KanbanCard({ card, getCards }) {
                     <ModalOverlay />
                     <ModalContent>
                         <form onSubmit={handleEditTopic}>
-                            <ModalHeader>{title || topicSelected.title}: </ModalHeader>
+                            <ModalHeader>{title || topicSelected.title || "Editar Card"}: </ModalHeader>
                             <Divider w="100%" />
                             <ModalCloseButton />
                             <ModalBody>
                                 <FormControl mt={4}>
                                     <FormLabel>Title</FormLabel>
-                                    <Editable defaultValue={title}>
-                                        <EditablePreview />
                                         <Input
                                             placeholder="Edit Topic"
                                             value={title}
                                             onChange={(e) => setTitle(e.target.value)}
-                                            as={EditableInput}
                                         />
-                                    </Editable>
                                 </FormControl>
                                 <FormControl mt={4}>
                                     <FormLabel>Content</FormLabel>
-                                    <Editable defaultValue={content || topicSelected.content}>
-                                        <EditablePreview />
                                         <Input
                                             placeholder="Edit Topic"
                                             value={content}
                                             onChange={(e) => setContent(e.target.value)}
-                                            as={EditableInput}
                                         />
-                                    </Editable>
                                 </FormControl>
                             </ModalBody>
 

@@ -11,7 +11,7 @@ function Methodologies() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState({})
     const { isOpen, onOpen, onClose } = useDisclosure()
-    
+
     const [title, setTitle] = useState("");
     const [subtitle, setSubtitle] = useState("");
     const [color, setColor] = useState("ffffff");
@@ -35,8 +35,8 @@ function Methodologies() {
     }
 
     useEffect(() => {
-        async function exec(){
-        getMyCards()
+        async function exec() {
+            await getMyCards()
         }
         exec()
     }, [])
@@ -44,7 +44,7 @@ function Methodologies() {
     async function createCard(e) {
         e.preventDefault()
 
-        if(title === "" || subtitle === "") {
+        if (title === "" || subtitle === "") {
             setError({
                 title: "Kanban",
                 subtitle: "Invalid Data",
@@ -77,15 +77,15 @@ function Methodologies() {
         return (
             <Base padding={"0"} direction="column">
                 <HStack justifyContent={'space-between'} w="100%" h="60px" bgColor={'gray.200'} p="10px 20px">
-                    <Select placeholder="Select Methodology" borderColor={"gray.400"} w="auto" onChange={()=>alert("Next Updates")}>
+                    <Select placeholder="Select Methodology" borderColor={"gray.400"} w="auto" onChange={() => alert("Next Updates")}>
                         <option value="kanban">Kanban</option>
                     </Select>
                     <Button colorScheme="teal" onClick={onOpen}>Create Card</Button>
                 </HStack>
                 <Flex w="100%" h="100%" p="40px" flexWrap={'nowrap'} overflowX='scroll'>
                     {
-                        cards && cards.map((card, key)=>{
-                            return <KanbanCard card={card} key={key} getCards={()=>{getMyCards()}}/>
+                        cards && cards.map((card, key) => {
+                            return <KanbanCard card={card} key={key} getCards={() => { getMyCards() }} />
                         })
                     }
                 </Flex>
@@ -98,32 +98,32 @@ function Methodologies() {
                             <ModalCloseButton />
                             <ModalBody>
                                 {
-                                    error && error.category === "create" ? <ErrorMessage message={error.detail}/>: <></>
+                                    error && error.category === "create" ? <ErrorMessage message={error.detail} /> : <></>
                                 }
                                 <FormControl mt={1} isRequired>
                                     <FormLabel>Title</FormLabel>
-                                        <Input
-                                            placeholder="Create Topic"
-                                            value={title}
-                                            onChange={(e) => setTitle(e.target.value)}
-                                        />
+                                    <Input
+                                        placeholder="Create Topic"
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                    />
                                 </FormControl>
                                 <FormControl mt={4} isRequired>
                                     <FormLabel>Subtitle</FormLabel>
-                                        <Input
-                                            placeholder="Create Topic"
-                                            value={subtitle}
-                                            onChange={(e) => setSubtitle(e.target.value)}
-                                        />
+                                    <Input
+                                        placeholder="Create Topic"
+                                        value={subtitle}
+                                        onChange={(e) => setSubtitle(e.target.value)}
+                                    />
                                 </FormControl>
                                 <FormControl mt={4}>
                                     <FormLabel>Color</FormLabel>
-                                        <Input
-                                            placeholder="Create Topic"
-                                            value={color}
-                                            onChange={(e) => {setColor(e.target.value); console.log(e.target.value)}}
-                                            type='color'
-                                        />
+                                    <Input
+                                        placeholder="Create Topic"
+                                        value={color}
+                                        onChange={(e) => { setColor(e.target.value); console.log(e.target.value) }}
+                                        type='color'
+                                    />
                                 </FormControl>
                             </ModalBody>
 

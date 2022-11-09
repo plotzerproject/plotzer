@@ -18,6 +18,12 @@ function Profile() {
 
     const [profilePhoto, setProfilePhoto] = useState("")
 
+    const [typeUpdate, setTypeUpdate] = useState("")
+    async function openUpdatePhoto(type) {
+        setTypeUpdate(type)
+        onOpen()
+    }
+
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [about, setAbout] = useState("")
@@ -56,7 +62,7 @@ function Profile() {
     async function handleUpdatePhoto(e) {
         e.preventDefault()
         const formData = new FormData()
-        if (profilePhoto === "Background") {
+        if (typeUpdate === "Background") {
             formData.append('background', profilePhoto)
         } else {
             formData.append('photo', profilePhoto)
@@ -89,12 +95,6 @@ function Profile() {
                 detail: error.response.data.errors[0].detail
             })
         }
-    }
-
-    const [typeUpdate, setTypeUpdate] = useState("")
-    async function openUpdatePhoto(type) {
-        setTypeUpdate(type)
-        onOpen()
     }
 
     useEffect(() => {
@@ -161,7 +161,7 @@ function Profile() {
                                 <HStack justifyContent={'space-between'} w="80%" justify={'flex-start'} lineHeight='1'>
                                     <VStack textAlign={'left'}>
                                         <Heading w="100%" mb="0">{user.attributes.name}</Heading>
-                                        <Text mt={'0'} w="100%">{user.attributes.description ? `${user.attributes.description}` : !id_user ? "Seu perfil não possui uma descrição, clique aqui para adicionar" :
+                                        <Text mt={'0'} w="100%">{user.attributes.about ? `${user.attributes.about}` : !id_user ? "Seu perfil não possui uma descrição, clique aqui para adicionar" :
                                             "Este perfil não possui uma descrição!"}</Text>
                                     </VStack>
                                     {!id_user && <Button colorScheme="teal" onClick={handleOpenEdit}>Edit</Button>}
@@ -170,7 +170,7 @@ function Profile() {
                         </Flex>
                         <Flex maxW="1024px" w="1024px" backgroundColor={'gray.200'} flexDir='column' p="30px" boxShadow='base' borderRadius={'8px'}>
                             <Heading fontSize={'3xl'} lineHeight='7' fontWeight={'semibold'} mb='10px'>About</Heading>
-                            {user.attributes.about ? <Text>{user.attributes.about}</Text> : !id_user ? <Text>Seu perfil não possui um sobre, clique aqui para adicionar</Text> :
+                            {user.attributes.description ? <Text>{user.attributes.description}</Text> : !id_user ? <Text>Seu perfil não possui um sobre, clique aqui para adicionar</Text> :
                                 <Text>Este perfil não possui um sobre!</Text>}
                         </Flex>
 

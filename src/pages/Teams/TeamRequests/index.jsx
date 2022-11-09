@@ -1,5 +1,5 @@
 import { CheckIcon } from "@chakra-ui/icons";
-import { Alert, AlertDescription, AlertIcon, Avatar, Flex, Grid, GridItem, Heading, HStack, IconButton, Tooltip, VStack } from "@chakra-ui/react";
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Avatar, Flex, Grid, GridItem, Heading, HStack, IconButton, Text, Tooltip, VStack } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -22,7 +22,6 @@ function TeamRequests() {
         try {
             const req = await api.get(`/team/${id_team}/requests`);
             setRequests(req.data.data);
-            setLoading(false)
         } catch (err) {
             console.log(err);
         }
@@ -49,11 +48,11 @@ function TeamRequests() {
     async function handleAcceptRequest(id_user) {
         console.log(id_user)
         try {
-          const accept = await api.post(`/team/${id_team}/accept/`, {id: id_user})
-          console.log(accept)
+            const accept = await api.post(`/team/${id_team}/accept/`, { id: id_user })
+            await getRequests()
         } catch (err) {
-          console.log(err)
-          setError(err.message)
+            console.log(err)
+            setError(err.message)
         }
     }
 
@@ -80,7 +79,7 @@ function TeamRequests() {
                     </Flex>
                     <Flex m={'8px 0'} p="16px" w="100%" h="100%" flexDir={'column'}>
                         <Heading>Requisições:</Heading>
-                        <VStack w="100%" h="100%">
+                        <VStack w="100%" h="100%" p="16px">
                             {
                                 requests.length !== 0 ? <Grid
                                     templateColumns='1fr 1fr'
@@ -114,10 +113,11 @@ function TeamRequests() {
                                         </GridItem>
                                     })}
                                 </Grid>
-                                    : <Alert status='sucess'>
-                                        <AlertIcon />
-                                        <AlertDescription>Nenhuma requisição</AlertDescription>
-                                    </Alert>
+                                    : <Heading color={'red'} fontSize='xl'>Nenhuma requisição encontrada!</Heading>
+                                    // <Alert status='sucess'>
+                                    //     <AlertIcon />
+                                    //     <AlertDescription>Nenhuma requisição</AlertDescription>
+                                    // </Alert>
                             }
                         </VStack>
                     </Flex>

@@ -251,6 +251,7 @@ function TeamAssignments() {
                                             type={'file'}
                                             onChange={(e) => setUserAttachments(e.target.files)}
                                             multiple
+                                            accept="image/*"
                                         // value={title}
                                         // onChange={(e) => setTitle(e.target.value)}
                                         />

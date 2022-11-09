@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../../services/api";
 import Loading from "../Loading";
 import Base from "../../components/Base";
@@ -11,6 +11,7 @@ function AssignmentSingle() {
     const [assignment, setAssignment] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState({});
+    let navigate = useNavigate();
 
     const [userAttachments, setUserAttachments] = useState([])
 
@@ -42,14 +43,18 @@ function AssignmentSingle() {
         try {
             const data = new FormData()
             const files = [...userAttachments]
+            console.log(files)
             files.forEach((file)=>{
                 data.append("userAttachments", file)
             })
             
-            await api.post(`/assignment/@me/complete-assignment/${id_assignment}`, 
+            const a = await api.post(`/assignment/@me/complete-assignment/${id_assignment}`, 
             data,
             {headers: { 'content-type': 'multipart/form-data'}})
 
+            alert("Enviado!")
+
+            navigate("/calendar")
             setUserAttachments([])
             getAssignment()
 
@@ -66,7 +71,10 @@ function AssignmentSingle() {
         exec()
     }, [])
 
-    useEffect(()=>console.log(userAttachments), [])
+    async function addAttachments(e){
+        const files = [...e.target.files]
+        setUserAttachments((x)=>[...x, ...files])
+    }
 
     if (loading) {
         return <Loading />;
@@ -94,7 +102,7 @@ function AssignmentSingle() {
                         </HStack>
                         <Text w="100%">{assignment.attributes.description}</Text>
                         <HStack w="100%">
-                            <Button textColor={"white"} onClick={() => handleCompleteAttachments}>
+                            <Button textColor={"white"} onClick={handleCompleteAttachments}>
                                 Completar
                             </Button>
                         </HStack>
@@ -106,7 +114,7 @@ function AssignmentSingle() {
                         <VStack>
                             {
                                 assignment && assignment.attributes.assignmentAttachments.length !== 0 ? assignment.attributes.assignmentAttachments.map((attachment) => {
-                                    return <Flex w="100%" p="20px" bgColor={'gray.300'} onClick={() => { alert("como alterar a pag?") }} cursor='pointer' key={attachment.id}>
+                                    return <Flex w="100%" p="20px" bgColor={'gray.300'} onClick={() => { alert("testes?") }} cursor='pointer' key={attachment.id}>
                                         <Heading fontSize={'md'}>{attachment.name}</Heading>
                                     </Flex>
                                 }) : <Text>Nenhum arquivo anexado!</Text>
@@ -130,13 +138,12 @@ function AssignmentSingle() {
                         <Divider w="100%" margin={'0 auto'} />
                         <VStack>
                             {
-                                // userAttachments ? userAttachments.map((attachment, key)=>{
-                                //     console.log(userAttachments)
-                                //     return <Heading key={key}>teste</Heading>
-                                // //     return <Flex w="100%" p="20px" bgColor={'gray.300'} onClick={() => { alert("como alterar a pag?") }} cursor='pointer' key={attachment.id}>
-                                // //     <Heading fontSize={'md'}>{attachment.name}</Heading>
-                                // // </Flex>
-                                // }) : null
+                                userAttachments ? userAttachments.map((attachment, key)=>{
+                                    // return <Heading key={key}>teste</Heading>
+                                    return <Flex key={key} w="100%" p="20px" bgColor={'gray.300'} onClick={() => { alert("como alterar a pag?") }} cursor='pointer'>
+                                    <Heading fontSize={'md'}>{attachment.name}</Heading>
+                                </Flex>
+                                }) : null
                             }
                         </VStack>
                     </VStack>
@@ -153,7 +160,7 @@ function AssignmentSingle() {
                                         <FormLabel>Photo</FormLabel>
                                         <Input
                                             type={'file'}
-                                            onChange={(e) => setUserAttachments(e.target.files)}
+                                            onChange={addAttachments}
                                             accept={"image/*"}
                                             multiple
                                         // value={title}

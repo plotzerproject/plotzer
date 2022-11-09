@@ -196,6 +196,8 @@ function Team() {
                 {me && me.userPermissions >= 2 && <Button colorScheme="teal" onClick={() => navigate(`/teams/${id_team}/assignments/`)}>Tarefas</Button>}
                 {me && me.userPermissions >= 4 && <Button colorScheme="teal" onClick={() => alert("editar")}>Editar</Button>}
                 {me && me.userPermissions >= 4 && <Button colorScheme="teal" onClick={() => navigate(`/teams/${id_team}/requests/`)}>Ver Requisições</Button>}
+                <Button colorScheme="teal" onClick={()=>alert("Proximas Atualizações!")}>Kanban</Button>
+                {me && me.userPermissions >= 3 && <Button colorScheme="teal" onClick={() => alert("Proximas atualizações!")}>Gestão Financeira</Button>}
               </ButtonGroup>
             </Flex>
           </Skeleton>

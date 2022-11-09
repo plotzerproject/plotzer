@@ -125,7 +125,10 @@ function AssignmentAdm() {
                         <VStack >
                             {Object.keys(userSelected).length !== 0 ?
                                 userSelected.userAttachments.length !== 0 ? userSelected.userAttachments.map((attachment, key) => {
-                                    return <h1 key={key}>teste</h1>
+                                    console.log(attachment)
+                                    return <Flex key={key} w="100%" p="20px" bgColor={'gray.300'} onClick={() => { alert("testes") }} cursor='pointer'>
+                                        <Heading fontSize={'md'}>{attachment.name}</Heading>
+                                    </Flex>
                                 }) : <Text>Nenhum arquivo anexado!</Text>
                                 : <Text>Selecione um usuário</Text>}
                         </VStack>
