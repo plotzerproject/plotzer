@@ -15,7 +15,7 @@ function AssignmentAdm(data) {
   const getMembers = () => {
     const received = assignment.attributes.users.filter((u) => u.status === "received")
     const total = assignment.attributes.users.length
-    return { received: received.length, total }
+    return { sent: total - received.length, total }
   }
 
   return (
@@ -35,7 +35,7 @@ function AssignmentAdm(data) {
             />
             <Heading fontSize={'lg'} fontWeight='bold'>
               {
-                `${getMembers().received}/${getMembers().total}`
+                `${getMembers().sent}/${getMembers().total}`
               }
             </Heading>
           </HStack>

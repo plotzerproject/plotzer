@@ -29,7 +29,7 @@ function Assignment({ data, showTeam }) {
     // const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
     if (assignment.attributes.status === "received") {
       if (date < dateLimit) {
-        return [colors.free, `Enviar até ${dateLimit.getDate()}/${dateLimit.getMonth() + 1}/${dateLimit.getFullYear()}`, colors.freeIcon]
+        return [colors.free, `Enviar até as ${dateLimit.getHours()}h${dateLimit.getMinutes()} do dia ${dateLimit.getDate()}/${dateLimit.getMonth() + 1}/${dateLimit.getFullYear()}`, colors.freeIcon]
         // } else if(diffInDays < 5) {
         //   return [colors.warn, `Send until ${dateLimit.getDate()}/${dateLimit.getMonth()}/${dateLimit.getFullYear()}`, colors.warnIcon]
       } else {
@@ -46,7 +46,7 @@ function Assignment({ data, showTeam }) {
 
   return (
     <>
-      <Flex h="70px" w="100%" bgColor={verifyTime[0]} cursor='pointer' justifyContent="space-between" alignItems={'center'} p="16px 25px" borderRadius={'md'} onClick={handleOpenAssignment}>
+      <Flex h="70px" w="100%" bgColor={verifyTime[0]} cursor='pointer' justifyContent="space-between" alignItems={'center'} p="16px 25px" borderRadius={'md'} onClick={handleOpenAssignment} m="8px 0">
         <HStack>
           <Box w="50px" h="50px" bgColor={'gray.400'} bgImage={assignment.attributes.assignment.photo ? assignment.attributes.assignment.photo : ""} bgSize='100% 100%' bgPosition={'center'} />
           <VStack alignItems={'center'}>

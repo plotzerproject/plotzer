@@ -66,6 +66,8 @@ function AssignmentSingle() {
         exec()
     }, [])
 
+    useEffect(()=>console.log(userAttachments), [])
+
     if (loading) {
         return <Loading />;
     } else if (!loading && error.title === "ERR_ASSIGNMENT_NOT_FOUND") {
@@ -87,7 +89,7 @@ function AssignmentSingle() {
                             <Tag size={'lg'} variant='solid' colorScheme='teal'>
                                 {assignment.attributes.category}
                             </Tag>
-                            <Text>- {dateLimit.getDate()}/{dateLimit.getMonth() + 1}/{dateLimit.getFullYear()}
+                            <Text>- {dateLimit.getHours()}h{dateLimit.getMinutes()} do dia {dateLimit.getDate()}/{dateLimit.getMonth() + 1}/{dateLimit.getFullYear()}
                             </Text>
                         </HStack>
                         <Text w="100%">{assignment.attributes.description}</Text>
@@ -126,8 +128,16 @@ function AssignmentSingle() {
                             />
                         </HStack>
                         <Divider w="100%" margin={'0 auto'} />
-                        <VStack >
-                            asd
+                        <VStack>
+                            {
+                                // userAttachments ? userAttachments.map((attachment, key)=>{
+                                //     console.log(userAttachments)
+                                //     return <Heading key={key}>teste</Heading>
+                                // //     return <Flex w="100%" p="20px" bgColor={'gray.300'} onClick={() => { alert("como alterar a pag?") }} cursor='pointer' key={attachment.id}>
+                                // //     <Heading fontSize={'md'}>{attachment.name}</Heading>
+                                // // </Flex>
+                                // }) : null
+                            }
                         </VStack>
                     </VStack>
                 </Flex>
@@ -144,6 +154,7 @@ function AssignmentSingle() {
                                         <Input
                                             type={'file'}
                                             onChange={(e) => setUserAttachments(e.target.files)}
+                                            accept={"image/*"}
                                             multiple
                                         // value={title}
                                         // onChange={(e) => setTitle(e.target.value)}

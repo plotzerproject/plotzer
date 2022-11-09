@@ -8,22 +8,21 @@ import {
   VStack,
   Flex,
   ButtonGroup,
+  Select,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/logo_type.svg";
+import { api } from "../../services/api";
 
 function StartCreateTeam() {
-  let [page, setPage] = useState(0);
   const navigate = useNavigate();
 
   const [nameTeam, setNameTeam] = useState("");
   const [areaTeam, setAreaTeam] = useState("");
   const [descTeam, setDescTeam] = useState("");
   const [privacyTeam, setPrivacyTeam] = useState("");
-
-  useEffect(() => { console.log(nameTeam, areaTeam, descTeam, privacyTeam) }, [nameTeam, areaTeam, descTeam, privacyTeam])
+  const [slugTeam, setSlugTeam] = useState("");
 
   const pages = [
     {
@@ -54,6 +53,13 @@ function StartCreateTeam() {
       value: privacyTeam,
       setValue: setPrivacyTeam,
     },
+    {
+      label: "Insira o slug da equipe",
+      type: "text",
+      placeholder: "Insira o slug da equipe",
+      value: slugTeam,
+      setValue: setSlugTeam,
+    }
   ];
 
   const [step, setStep] = useState(1)
@@ -98,13 +104,34 @@ function StartCreateTeam() {
       case 4:
         return <FormControl>
           <FormLabel>{pages[step - 1].label}</FormLabel>
-          <Input
+          {/* <Input
             type="text"
             size="md"
             placeholder={pages[step - 1].placeholder}
             width="288px"
             value={privacyTeam}
             onChange={(e) => setPrivacyTeam(e.target.value)}
+          /> */}
+          <Select
+            placeholder="Privacidade da Equipe"
+            value={privacyTeam}
+            onChange={(e) => setPrivacyTeam(e.target.value)}
+          >
+            <option value="open">Aberto</option>
+            <option value="closed">Fechada</option>
+            <option value="only-invites">Somente Convites</option>
+          </Select>
+        </FormControl>
+      case 5:
+        return <FormControl>
+          <FormLabel>{pages[step - 1].label}</FormLabel>
+          <Input
+            type="text"
+            size="md"
+            placeholder={pages[step - 1].placeholder}
+            width="288px"
+            value={slugTeam}
+            onChange={(e) => setSlugTeam(e.target.value)}
           />
         </FormControl>
       default:
@@ -113,7 +140,7 @@ function StartCreateTeam() {
         setDescTeam("")
         setAreaTeam("")
         setPrivacyTeam("")
-        return <FormControl>
+        return <FormControl >
           <FormLabel>{pages[step - 1].label}</FormLabel>
           <Input
             type="text"
@@ -127,41 +154,72 @@ function StartCreateTeam() {
     }
   }
 
-  async function handleCreateTeam() {
+  async function handleCreateTeam(e) {
+    e.preventDefault()
 
+    if (step === 5 && slugTeam !== "") {
+      // cuidar do submit
+      const data = {
+        name: nameTeam,
+        area: areaTeam,
+        description: descTeam,
+        privacy: privacyTeam,
+        slug: slugTeam
+      }
+      const a = await api.post(`/team`, data)
+      console.log(a)
+    }
   }
 
   async function handleNextStep() {
     switch (step) {
       case 1:
         if (nameTeam !== "") {
-          step !== 4 && setStep(step + 1)
+          step !== 5 && setStep((x) => x + 1)
         } else {
           alert("Falta coisa")
         }
         break;
       case 2:
         if (areaTeam !== "") {
-          step !== 4 && setStep(step + 1)
+          step !== 5 && setStep((x) => x + 1)
         } else {
           alert("Falta coisa")
         }
         break;
       case 3:
         if (descTeam !== "") {
-          step !== 4 && setStep(step + 1)
+          step !== 5 && setStep((x) => x + 1)
         } else {
           alert("Falta coisa")
         }
         break;
       case 4:
+          if (descTeam !== "") {
+            step !== 5 && setStep((x) => x + 1)
+          } else {
+            alert("Falta coisa")
+          }
+          break;
+      case 5:
         if (privacyTeam === "") {
-          alert("Falta coisa")
+          alert("Seleciona ae")
         }
         break;
       default:
         alert("erro")
         break;
+    }
+  }
+
+  function handlePreviousStep() {
+    if (step !== 1) {
+      if (step === 5) {
+        setPrivacyTeam("")
+      }
+      setStep((x) => x - 1)
+    } else {
+      navigate("/signed")
     }
   }
 
@@ -190,7 +248,7 @@ function StartCreateTeam() {
                   colorScheme="teal"
                   variant="solid"
                   marginTop="20px"
-                  onClick={() => step !== 1 ? setStep(step - 1) : navigate("/signed")}
+                  onClick={handlePreviousStep}
                 >
                   Voltar
                 </Button>
@@ -200,9 +258,9 @@ function StartCreateTeam() {
                   onClick={handleNextStep}
                   marginTop="20px"
                   id="btn-next"
-                  type={step >= 4 ? "submit" : "button"}
+                  type={step >= 5 ? "submit" : "button"}
                 >
-                  {step >= 4 ? "Enviar" : "Próximo"}
+                  {step >= 5 ? "Enviar" : "Próximo"}
                 </Button>
               </ButtonGroup>
             </Flex>
