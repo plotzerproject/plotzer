@@ -9,16 +9,21 @@ import {
   Flex,
   ButtonGroup,
 } from "@chakra-ui/react";
+import { useEffect } from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/logo_type.svg";
 
 function StartCreateTeam() {
   let [page, setPage] = useState(0);
+  const navigate = useNavigate();
 
   const [nameTeam, setNameTeam] = useState("");
   const [areaTeam, setAreaTeam] = useState("");
   const [descTeam, setDescTeam] = useState("");
   const [privacyTeam, setPrivacyTeam] = useState("");
+
+  useEffect(() => { console.log(nameTeam, areaTeam, descTeam, privacyTeam) }, [nameTeam, areaTeam, descTeam, privacyTeam])
 
   const pages = [
     {
@@ -51,17 +56,114 @@ function StartCreateTeam() {
     },
   ];
 
-  const [val, setVal] = useState("");
-  const handleNextPage = () => {
-    if(val != "") {
-        console.log(`pagina anterior ${page}`)
-        setPage(page++)
-        console.log(`nova pagina ${page}`)
-        console.log("---")
-    } else {
-        console.log("nao vai nao")
+  const [step, setStep] = useState(1)
+  const getComponentForm = () => {
+    switch (step) {
+      case 1:
+        return <FormControl>
+          <FormLabel>{pages[step - 1].label}</FormLabel>
+          <Input
+            type="text"
+            size="md"
+            placeholder={pages[step - 1].placeholder}
+            width="288px"
+            value={nameTeam}
+            onChange={(e) => setNameTeam(e.target.value)}
+          />
+        </FormControl>
+      case 2:
+        return <FormControl>
+          <FormLabel>{pages[step - 1].label}</FormLabel>
+          <Input
+            type="text"
+            size="md"
+            placeholder={pages[step - 1].placeholder}
+            width="288px"
+            value={areaTeam}
+            onChange={(e) => setAreaTeam(e.target.value)}
+          />
+        </FormControl>
+      case 3:
+        return <FormControl>
+          <FormLabel>{pages[step - 1].label}</FormLabel>
+          <Input
+            type="text"
+            size="md"
+            placeholder={pages[step - 1].placeholder}
+            width="288px"
+            value={descTeam}
+            onChange={(e) => setDescTeam(e.target.value)}
+          />
+        </FormControl>
+      case 4:
+        return <FormControl>
+          <FormLabel>{pages[step - 1].label}</FormLabel>
+          <Input
+            type="text"
+            size="md"
+            placeholder={pages[step - 1].placeholder}
+            width="288px"
+            value={privacyTeam}
+            onChange={(e) => setPrivacyTeam(e.target.value)}
+          />
+        </FormControl>
+      default:
+        setStep(1)
+        setNameTeam("")
+        setDescTeam("")
+        setAreaTeam("")
+        setPrivacyTeam("")
+        return <FormControl>
+          <FormLabel>{pages[step - 1].label}</FormLabel>
+          <Input
+            type="text"
+            size="md"
+            placeholder={pages[step - 1].placeholder}
+            width="288px"
+            value={nameTeam}
+            onChange={(e) => setNameTeam(e.target.value)}
+          />
+        </FormControl>
     }
-    };
+  }
+
+  async function handleCreateTeam() {
+
+  }
+
+  async function handleNextStep() {
+    switch (step) {
+      case 1:
+        if (nameTeam !== "") {
+          step !== 4 && setStep(step + 1)
+        } else {
+          alert("Falta coisa")
+        }
+        break;
+      case 2:
+        if (areaTeam !== "") {
+          step !== 4 && setStep(step + 1)
+        } else {
+          alert("Falta coisa")
+        }
+        break;
+      case 3:
+        if (descTeam !== "") {
+          step !== 4 && setStep(step + 1)
+        } else {
+          alert("Falta coisa")
+        }
+        break;
+      case 4:
+        if (privacyTeam === "") {
+          alert("Falta coisa")
+        }
+        break;
+      default:
+        alert("erro")
+        break;
+    }
+  }
 
   return (
     <Flex align="center" justifyContent="center" w="100vw" h="100vh" bgColor={'blue.400'}>
@@ -76,35 +178,31 @@ function StartCreateTeam() {
       >
         <VStack spacing={3}>
           <Image src={Logo} alt="Logo Plotzer" />
-          <form>
-            <FormControl>
-              <FormLabel>{pages[page].label}</FormLabel>
-              <Input
-                type="text"
-                size="md"
-                placeholder={pages[page].placeholder}
-                width="288px"
-                value={val}
-                onChange={(e) => setVal(e.target.value)}
-              />
-            </FormControl>
+          <form onSubmit={handleCreateTeam}>
+
+            <VStack>
+              {getComponentForm()}
+            </VStack>
+
             <Flex>
               <ButtonGroup gap="2">
                 <Button
                   colorScheme="teal"
                   variant="solid"
                   marginTop="20px"
+                  onClick={() => step !== 1 ? setStep(step - 1) : navigate("/signed")}
                 >
                   Voltar
                 </Button>
                 <Button
                   colorScheme="teal"
                   variant="solid"
-                  onClick={()=>handleNextPage()}
+                  onClick={handleNextStep}
                   marginTop="20px"
                   id="btn-next"
+                  type={step >= 4 ? "submit" : "button"}
                 >
-                  Próximo
+                  {step >= 4 ? "Enviar" : "Próximo"}
                 </Button>
               </ButtonGroup>
             </Flex>

@@ -29,6 +29,7 @@ import {
   AlertTitle,
   AlertDescription,
   ButtonGroup,
+  FormHelperText,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -52,8 +53,11 @@ function Teams() {
   const [description, setDescription] = useState("");
   const [privacy, setPrivacy] = useState("");
   const [slug, setSlug] = useState("");
+
   const [error, setError] = useState({});
   const [success, setSuccess] = useState(false);
+
+  const [slugJoin, setSlugJoin] = useState("")
 
   const [myTeams, setMyTeams] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -63,6 +67,7 @@ function Teams() {
 
   //modal attributes
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenJoinTeam, onOpen: onOpenJoinTeam, onClose: onCloseJoinTeam } = useDisclosure();
   const { isOpen: isOpenFixedModal, onOpen: openFixedModal, onClose: closeFixedModal } = useDisclosure();
 
   async function handleCreateTeam(e) {
@@ -94,6 +99,7 @@ function Teams() {
 
       } catch (err) {
         console.log(err);
+        alert("deu erro pra criar equipe")
         setError(err);
         // console.log
       }
@@ -129,6 +135,24 @@ function Teams() {
     const t = myTeams.find((t) => t.id === id)
     setTeamSelected(t)
     openFixedModal()
+  }
+
+  async function handleJoinTeam(e) {
+    e.preventDefault()
+    
+    if(slugJoin !== "") {
+      try {
+        const join = await api.post(`/team/${slugJoin}/join`)
+        console.log(join)
+        onCloseJoinTeam()
+        setSlugJoin("")
+      } catch (err) {
+        console.log(err)
+        alert("Ocorreu um erro ao requisitar a entrada")
+      }
+    } else {
+      alert("Campos vazios")
+    }
   }
 
   return (
@@ -219,21 +243,21 @@ function Teams() {
                         />
                       </Tooltip> */}
                       <HStack>
-                        <Tooltip label="See Members" placement="bottom">
+                        <Tooltip label="Ver Membros" placement="bottom">
                           <IconButton
                             variant="outline"
                             colorScheme="teal"
-                            aria-label="See Members"
+                            aria-label="Ver Membros"
                             fontSize={"24px"}
                             icon={<FaUserFriends />}
                             onClick={() => { navigate(`/teams/${item.id}/members`) }}
                           />
                         </Tooltip>
-                        <Tooltip label="Fixed" placement="bottom">
+                        <Tooltip label="Fixados" placement="bottom">
                           <IconButton
                             variant="outline"
                             colorScheme="teal"
-                            aria-label="Fixed"
+                            aria-label="Fixados"
                             fontSize={"24px"}
                             onClick={() => openFixed(item.id)}
                             icon={<BsPinAngleFill />}
@@ -257,7 +281,7 @@ function Teams() {
               borderWidth={"0.1px"}
               margin="0 15px"
               cursor={"pointer"}
-              onClick={() => alert("Proximas atualizações")}
+              onClick={onOpenJoinTeam}
             >
               <Flex
                 w="100%"
@@ -269,7 +293,7 @@ function Teams() {
                   <Box w="150px" h="150px">
                     <Icon as={FaPlusSquare} fontSize="150px" />
                   </Box>
-                  <Heading fontSize={"xl"}>Join a team</Heading>
+                  <Heading fontSize={"xl"}>Entrar em uma equipe</Heading>
                 </VStack>
               </Flex>
             </Box>
@@ -295,10 +319,39 @@ function Teams() {
                   <Box w="150px" h="150px">
                     <Icon as={FaPlusSquare} fontSize="150px" />
                   </Box>
-                  <Heading fontSize={"xl"}>Create a team</Heading>
+                  <Heading fontSize={"xl"}>Criar uma equipe</Heading>
                 </VStack>
               </Flex>
             </Box>
+            <Modal isOpen={isOpenJoinTeam} onClose={onCloseJoinTeam}>
+              <ModalOverlay />
+              <ModalContent>
+                <form onSubmit={handleJoinTeam}>
+                  <ModalHeader>Entrar em uma equipe</ModalHeader>
+                  <Divider w="100%" />
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <FormControl>
+                      <FormLabel>Slug</FormLabel>
+                      <Input
+                        placeholder="Digite o id da equipe"
+                        value={slugJoin}
+                        onChange={(e) => setSlugJoin(e.target.value)}
+                      />
+                    </FormControl>
+                  </ModalBody>
+
+                  <ModalFooter >
+                    <ButtonGroup>
+                      <Button variant={'ghost'} type='submit'>Entrar</Button>
+                      <Button colorScheme='blue' mr={3} onClick={onCloseJoinTeam}>
+                      Cancelar
+                      </Button>
+                    </ButtonGroup>
+                  </ModalFooter>
+                </form>
+              </ModalContent>
+            </Modal>
             {
               Object.keys(teamSelected).length !== 0 && <Modal isOpen={isOpenFixedModal} onClose={closeFixedModal} isCentered>
                 <ModalOverlay />
@@ -325,7 +378,7 @@ function Teams() {
                   <ModalFooter justifyContent={'space-between'}>
                     <ButtonGroup>
                       <Button variant={'ghost'} colorScheme="blue" mr={3} onClick={closeFixedModal}>
-                        Close
+                      Cancelar
                       </Button>
                     </ButtonGroup>
                   </ModalFooter>
@@ -337,20 +390,20 @@ function Teams() {
               {success && (
                 <Alert status="success" variant="subtle">
                   <AlertIcon />
-                  The team was created with successful!
+                  Equipe criada com sucesso!
                 </Alert>
               )}
               <ModalOverlay />
               <ModalContent>
                 <form onSubmit={handleCreateTeam}>
-                  <ModalHeader>Create a team</ModalHeader>
+                  <ModalHeader>Criar uma equipe</ModalHeader>
                   <Divider w="100%" />
                   <ModalCloseButton />
                   <ModalBody pb={6}>
                     <FormControl isRequired>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel>Nome</FormLabel>
                       <Input
-                        placeholder="Team's name"
+                        placeholder="Nome da equipe"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                       />
@@ -359,7 +412,7 @@ function Teams() {
                     <FormControl mt={4} isRequired>
                       <FormLabel>Area</FormLabel>
                       <Input
-                        placeholder="Team's area"
+                        placeholder="Área da Equipe"
                         value={area}
                         onChange={(e) => setArea(e.target.value)}
                       />
@@ -368,41 +421,42 @@ function Teams() {
                     <FormControl mt={4} isRequired>
                       <FormLabel>Description</FormLabel>
                       <Textarea
-                        placeholder="Team's description"
+                        placeholder="Descrição da Equipe"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                       />
                     </FormControl>
 
                     <FormControl mt={4} isRequired>
-                      <FormLabel>Privacy</FormLabel>
+                      <FormLabel>Privacidade</FormLabel>
                       <Select
-                        placeholder="Select the team's privacy"
+                        placeholder="Privacidade da Equipe"
                         value={privacy}
                         onChange={(e) => setPrivacy(e.target.value)}
                       >
-                        <option value="open">Open</option>
-                        <option value="closed">Closed</option>
-                        <option value="only-invites">Only Invites</option>
+                        <option value="open">Aberto</option>
+                        <option value="closed">Fechada</option>
+                        <option value="only-invites">Somente Convites</option>
                       </Select>
                     </FormControl>
 
                     <FormControl mt={4} isRequired>
                       <FormLabel>Slug</FormLabel>
                       <Input
-                        placeholder="Team's slug"
+                        placeholder="'Slug' da equipe"
                         value={slug}
                         onChange={(e) => setSlug(e.target.value)}
                       />
+                      <FormHelperText>O link de acesso da equipe.</FormHelperText>
                     </FormControl>
                   </ModalBody>
 
                   <ModalFooter>
                     <Button colorScheme="blue" mr={3} type="submit">
-                      Save
+                      Criar
                     </Button>
                     <Button onClick={onClose} textColor="white">
-                      Cancel
+                      Cancelar
                     </Button>
                   </ModalFooter>
                 </form>

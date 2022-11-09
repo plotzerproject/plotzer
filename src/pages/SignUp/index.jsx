@@ -44,10 +44,11 @@ function SignUp() {
                 setError("")
                 try {
                     await SignUp(name, email, password, plan)
-                } catch (error) {
-                    setError(error.message)
+                    navigate("/signed", { replace: true });
+                } catch (err) {
+                    console.log(err)
+                    setError(err.message)
                 }
-                navigate("/signed", { replace: true });
             } else {
                 setError("A senha esta diferente da confirmação")
             }
@@ -70,7 +71,7 @@ function SignUp() {
                 >
                     <Image src={Logo} alt='Logo Plotzer' />
                     {
-                        error && <ErrorMessage message={error} />
+                        error ? <ErrorMessage message={error} /> : null
                     }
                     <form onSubmit={handleCreateAccount}>
                         <FormControl isRequired>

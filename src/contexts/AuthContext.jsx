@@ -31,6 +31,8 @@ export const AuthProvider = ({ children }) => {
           applicationPermissions: data.data.attributes.applicationPermissions,
           photo: data.data.attributes.photo,
           background: data.data.attributes.background,
+          about: data.data.attributes.about,
+          description: data.data.attributes.description
         };
         localStorage.setItem("user", JSON.stringify(userData));
         setUser(userData);
@@ -67,6 +69,8 @@ export const AuthProvider = ({ children }) => {
         applicationPermissions: data.attributes.applicationPermissions,
         photo: data.attributes.photo,
         background: data.attributes.background,
+        about: data.attributes.about,
+        description: data.attributes.description
       };
 
       //define the default auth
@@ -78,11 +82,13 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", JSON.stringify(data.tokens.token));
       // localStorage.setItem("refresh-token", JSON.stringify(data.tokens.refresh_token));
 
+      setLoading(false)
+
     } catch (error) {
       //todo
-      console.log('login ', error)
-    } finally {
       setLoading(false)
+      console.log('login ', error)
+      throw new Error(error)
     }
   }
 
@@ -96,6 +102,7 @@ export const AuthProvider = ({ children }) => {
         name, email, password, plan
       })
       const { data } = response
+      
       const userData = {
         id: data.data.id,
         name: data.data.attributes.name,
@@ -104,29 +111,33 @@ export const AuthProvider = ({ children }) => {
           id: data.data.attributes.plan.id,
           purchaseDate: data.data.attributes.plan.purchaseDate,
           active: data.data.attributes.plan.active,
-          photo: data.attributes.photo,
-          background: data.attributes.background,
         },
         applicationPermissions: data.data.attributes.applicationPermissions,
+        photo: data.data.attributes.photo,
+        background: data.data.attributes.background,
+        about: data.data.attributes.about,
+        description: data.data.attributes.description
       };
+
+      //define the default auth
+      api.defaults.headers.common["Authorization"] = `Bearer ${data.data.tokens.token}`;
+
+      //set values in local storage and state
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("token", JSON.stringify(data.data.tokens.token));
       // localStorage.setItem("refresh-token", JSON.stringify(data.tokens.refresh_token));
-      api.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${data.data.tokens.token}`;
-      navigate("/signed", { replace: true });
+
+      setLoading(false)
+
     } catch (error) {
       //todo
-      console.log(error)
+      console.log(error.response.data.errors[0])
       if (error.response.data.errors[0].title === "ERR_USER_EXISTS") {
         throw new Error(error.response.data.errors[0].detail)
       } else {
         throw new Error(error.response.data.errors[0].detail)
       }
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -147,7 +158,7 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
-        authenticated: Boolean(user),
+        authenticated: Boolean(!!user),
         // isAuthenticated,
         user,
         SignUp,

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Base from "../../../components/Base";
 import Loading from "../../Loading";
 import { api } from "../../../services/api";
@@ -9,7 +9,8 @@ import {
 import TeamInfo from "../../../components/TeamInfo";
 
 function TeamMembers() {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+  let navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
     const { id_team } = useParams();
     const [team, setTeam] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -78,7 +79,6 @@ function TeamMembers() {
         }
     }
 
-
     if (loading) {
         return <Loading />
     } else {
@@ -104,11 +104,11 @@ function TeamMembers() {
                                 team.attributes.members ? team.attributes.members.map((member) => (
                                     <Tr key={member.id}>
                                         <Td>
-                                            <HStack>
-                                                {member.id.photo && <Avatar
+                                            <HStack onClick={()=>navigate(`/profile/${member.id}`)} cursor='pointer'>
+                                                {member.photo && <Avatar
                                                     name={member.name}
-                                                    size="md"
-                                                    src={member.id.photo}
+                                                    size="sm"
+                                                    src={member.photo}
                                                 />}
 
                                                 <Text>
@@ -152,9 +152,13 @@ function TeamMembers() {
                                     onChange={(e) => setRoleMember(e.target.value)}
                                 >
                                     {
-                                        colorsTag.map((color, key) => (
-                                            <option key={key} value={color[0]}>{color[0]}</option>
-                                        ))
+                                        colorsTag.map((color, key) => {
+                                            if(color[0] !== "owner") {
+                                                return <option key={key} value={color[0]}>{color[0]}</option>
+                                            } else {
+                                                return null;
+                                            }
+                                        })
                                     }
                                 </Select>
                             </FormControl>

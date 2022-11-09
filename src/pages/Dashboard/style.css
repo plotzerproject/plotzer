@@ -1,14 +1,15 @@
-.swiper1 {
+.swiper2 {
+    height: 100%;
     width: 100%;
-    max-width: 360px;
-    height: 280px;
+    max-width: 450px;
+    margin: 0
   }
   
   .swiper-slide {
     text-align: center;
     font-size: 18px;
     background: #ccc;
-  
+
     /* Center slide text vertically */
     display: -webkit-box;
     display: -ms-flexbox;

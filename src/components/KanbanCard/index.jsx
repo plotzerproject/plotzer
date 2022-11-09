@@ -120,7 +120,7 @@ function KanbanCard({ card, getCards }) {
                                         <EditablePreview />
                                         <Input
                                             placeholder="Edit Topic"
-                                            // value={title}
+                                            value={title}
                                             onChange={(e) => setTitle(e.target.value)}
                                             as={EditableInput}
                                         />

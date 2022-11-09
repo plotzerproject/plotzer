@@ -34,7 +34,7 @@ import { api } from "../../services/api";
 import Loading from "../Loading";
 
 function Calendar() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(true)
   const [assignments, setAssignments] = useState([])
   const [errorGetAssignment, setErrorGetAssignment] = useState({})
@@ -89,9 +89,9 @@ function Calendar() {
               </CheckboxGroup>
             </HStack>
           </HStack>
-          <Button textColor={"white"} onClick={onOpen}>
+          {/* <Button textColor={"white"} onClick={onOpen}>
             Adicionar
-          </Button>
+          </Button> */}
         </TabList>
 
         {
@@ -101,7 +101,7 @@ function Calendar() {
                 {
                   assignments ?
                     assignments.map((item, indice) => {
-                      return item.attributes.status === "received" ? <Assignment data={item} key={item.id} /> : null
+                      return item.attributes.status === "received" ? <Assignment data={item} key={item.id} showTeam={true}/> : null
                     }) :
                     <Alert status='error'>
                     <AlertIcon />
@@ -113,7 +113,7 @@ function Calendar() {
                 {
                   assignments ?
                     assignments.map((item, indice) => {
-                      return item.attributes.status === "sent" || item.attributes.status === "returned" ? <Assignment data={item} key={item.id} /> : null
+                      return item.attributes.status === "sent" || item.attributes.status === "returned" ? <Assignment data={item} key={item.id} showTeam={true}/> : null
                     }) :
                     <Heading>{errorGetAssignment.detail}</Heading>
                 }
@@ -122,7 +122,7 @@ function Calendar() {
         }
       </Tabs>
 
-      {!loading && teams ? <Modal isCentered isOpen={isOpen} onClose={onClose}>
+      {/* {!loading && teams ? <Modal isCentered isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Create an assignment</ModalHeader>
@@ -165,7 +165,7 @@ function Calendar() {
           </ModalFooter>
         </ModalContent>
       </Modal> : null
-      }
+      } */}
     </Base>
   );
 }

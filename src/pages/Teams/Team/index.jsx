@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Link as ReactLink} from "react-router-dom";
 
 import {
   Alert,
@@ -16,6 +17,7 @@ import {
   Icon,
   Image,
   Input,
+  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -82,7 +84,7 @@ function Team() {
       return [key, _.sumBy(values[key], (v) => v.value)];
     });
 
-    return [["User", "Reputation"], ...result];
+    return [["Usuário", "Reputação"], ...result];
   };
 
   async function getTeam() {
@@ -91,7 +93,7 @@ function Team() {
       setTeam(t.data.data);
 
       const userLC = JSON.parse(localStorage.getItem("user"))
-      const myInfo = t.data.data.attributes.members.find((u)=>u.id === userLC.id)
+      const myInfo = t.data.data.attributes.members.find((u) => u.id === userLC.id)
       setMe(myInfo)
 
       const data = [
@@ -130,9 +132,9 @@ function Team() {
     }
   }
 
-  async function handleAddFixed(e){
+  async function handleAddFixed(e) {
     e.preventDefault()
-    if(titleFixed !== "" && contentFixed !== "") {
+    if (titleFixed !== "" && contentFixed !== "") {
       try {
         const data = {
           title: titleFixed,
@@ -155,13 +157,13 @@ function Team() {
   const [fixedSelected, setFixedSelected] = useState({})
 
   async function getFixedModal(id) {
-    const att = team.attributes.fixed.find((f)=>f._id == id)
+    const att = team.attributes.fixed.find((f) => f._id === id)
     setFixedSelected(att)
     onOpenFixed()
   }
 
   useEffect(() => {
-    async function exec(){
+    async function exec() {
       setLoading(true)
       await getTeam();
       await getMyAssignments()
@@ -176,35 +178,35 @@ function Team() {
     return (
       <Base title={team.attributes.name || "Teste"} padding={"0"}>
         <VStack w={"75%"} h="100%">
-        <Skeleton height='250px' w="100%" isLoaded={!loading}>
-        <Flex
-            w="100%"
-            h="250px"
-            p="30px"
-            pos={"relative"}
-            backgroundColor={"gray.300"}
-            backgroundImage={team.attributes.background}
-            backgroundRepeat="no-repeat"
-            backgroundSize={"cover"}
-          >
-            <TeamInfo team={team} openMember={true} />
-            <ButtonGroup pos={"absolute"} bottom="15px" right="30px">
-              {/* <Button colorScheme="teal">Kanban</Button> */}
-              <Button colorScheme="teal" onClick={()=>navigate(`/teams/${id_team}/stats`)}>Stats</Button>
-              {me && me.userPermissions >= 2 && <Button colorScheme="teal" onClick={()=>navigate(`/teams/${id_team}/assignments/`)}>Assignments</Button>} 
-              {me && me.userPermissions >= 4 && <Button colorScheme="teal" onClick={()=>alert("editar")}>Edit Team</Button>} 
-              {me && me.userPermissions >= 4 && <Button colorScheme="teal" onClick={()=>alert("membros")}>See Requests</Button>} 
-            </ButtonGroup>
-          </Flex>
-        </Skeleton>
+          <Skeleton height='250px' w="100%" isLoaded={!loading}>
+            <Flex
+              w="100%"
+              h="250px"
+              p="30px"
+              pos={"relative"}
+              backgroundColor={"gray.300"}
+              backgroundImage={team.attributes.background}
+              backgroundRepeat="no-repeat"
+              backgroundSize={"cover"}
+            >
+              <TeamInfo team={team} openMember={true} />
+              <ButtonGroup pos={"absolute"} bottom="15px" right="30px">
+                {/* <Button colorScheme="teal">Kanban</Button> */}
+                {/* <Button colorScheme="teal" onClick={() => navigate(`/teams/${id_team}/stats`)}>Stats</Button> */}
+                {me && me.userPermissions >= 2 && <Button colorScheme="teal" onClick={() => navigate(`/teams/${id_team}/assignments/`)}>Tarefas</Button>}
+                {me && me.userPermissions >= 4 && <Button colorScheme="teal" onClick={() => alert("editar")}>Editar</Button>}
+                {me && me.userPermissions >= 4 && <Button colorScheme="teal" onClick={() => navigate(`/teams/${id_team}/requests/`)}>Ver Requisições</Button>}
+              </ButtonGroup>
+            </Flex>
+          </Skeleton>
           <VStack w="100%" p="0px 15px 0px 15px" h="100%">
-            <HStack w="100%" h="100%" alignItems={'flex-start'}>
+            <HStack w="100%" h="100%" alignItems={'center'}>
               <Swiper
                 navigation={true}
                 pagination={true}
                 modules={[Navigation, Pagination]}
                 // modules={[Pagination]}
-                className="mySwiper"
+                className="swiper1"
               >
                 <SwiperSlide>
                   <Chart
@@ -228,16 +230,16 @@ function Team() {
               >
                 <HStack w="100%" justify={'space-between'}>
                   <HStack>
-                  <Heading fontSize={"2xl"} lineHeight="7">
-                    Fixed's
-                  </Heading>
-                  <Icon as={FaThumbtack} fontSize="24px" color={"#D82525"} />
+                    <Heading fontSize={"2xl"} lineHeight="7">
+                      Avisos Fixados
+                    </Heading>
+                    <Icon as={FaThumbtack} fontSize="24px" color={"#D82525"} />
                   </HStack>
-                  {me && me.userPermissions >= 4 && <Button colorScheme="teal" onClick={onOpen}>Add Fixed</Button>} 
+                  {me && me.userPermissions >= 4 && <Button colorScheme="teal" onClick={onOpen}>Adicionar Fixado</Button>}
                 </HStack>
                 <VStack w="100%" mt={"20px"}>
                   {fixed.length !== 0 ?
-    
+
                     fixed.slice(0, 4).map((f, k) => {
                       return (
                         <Flex
@@ -249,20 +251,20 @@ function Team() {
                           justify={"center"}
                           align="center"
                           cursor={'pointer'}
-                          onClick={()=>getFixedModal(f._id)}
+                          onClick={() => getFixedModal(f._id)}
                         >
                           <Text fontWeight={"bold"}>{f.title}</Text>
                         </Flex>
                       );
                     })
-                     : <Alert status='error'>
-                    <AlertIcon />
-                    <AlertDescription>Nenhum fixado encontrado</AlertDescription>
-                  </Alert>}
+                    : <Alert status='error'>
+                      <AlertIcon />
+                      <AlertDescription>Nenhum fixado encontrado</AlertDescription>
+                    </Alert>}
                 </VStack>
               </Flex>
             </HStack>
-            <NextAssignments assignments={assignments} error={Boolean(assignments)}/>
+            <NextAssignments assignments={assignments} error={Boolean(assignments)} showTeam={false}/>
           </VStack>
         </VStack>
         <VStack w={"25%"} bgColor={"gray.100"} h="100%">
@@ -275,7 +277,7 @@ function Team() {
             <HStack>
               <Icon as={FaHashtag} fontSize="24px" color={"black"} />
               <Heading fontSize={"2xl"} lineHeight="7">
-                General
+                Chat Geral
               </Heading>
             </HStack>
             <Icon as={FaCaretDown} fontSize="24px" color={"black"} />
@@ -289,82 +291,84 @@ function Team() {
             alignItems="center"
             justify={"center"}
           >
-            {msgs.length !== 0 ? msgs.map((msg)=>{
-                <>salve</>
-              }) : (
+            {msgs.length !== 0 ? msgs.map((msg) => {
+              <>salve</>
+            }) : (
               <VStack>
                 <Image src={MessageNotFoundImg} alt="Messages not found" />
                 <Heading fontSize={"lg"} as={"h4"} fontWeight="medium">
-                  No messages found in this team.
+                  Nenhuma mensagem encontrada aqui.
                 </Heading>
                 <Text fontSize={"md"} fontWeight="normal">
-                  Start the chat with a "hey!"
+                  Comece o chat com "Oi"!
                 </Text>
               </VStack>
             )}
 
-            <InputChat />
+            <InputChat position={{pos: "absolute", left: "20px", bottom: "15px"}} width="90%"/>
           </VStack>
         </VStack>
         <Modal isCentered isOpen={isOpen} onClose={onClose} size="lg">
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Create a team</ModalHeader>
-                    <Divider w="100%" />
-                    <ModalCloseButton />
-                    <form onSubmit={handleAddFixed}>
-                        <ModalBody pb={6}>
-                            <FormControl isRequired>
-                                <FormLabel>Title</FormLabel>
-                                <Input
-                                    placeholder="Fixed's title"
-                                    type={'text'}
-                                    value={titleFixed}
-                                    onChange={(e) => setTitleFixed(e.target.value)}
-                                />
-                            </FormControl>
-                            <FormControl isRequired>
-                                <FormLabel>Title</FormLabel>
-                                <Input
-                                    placeholder="Fixed's content"
-                                    type={'text'}
-                                    value={contentFixed}
-                                    onChange={(e) => setContentFixed(e.target.value)}
-                                />
-                            </FormControl>
-                        </ModalBody>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Adicionar uma mensagem fixada</ModalHeader>
+            <Divider w="100%" />
+            <ModalCloseButton />
+            <form onSubmit={handleAddFixed}>
+              <ModalBody pb={6}>
+                <FormControl isRequired>
+                  <FormLabel>Title</FormLabel>
+                  <Input
+                    placeholder="Titulo do Fixado"
+                    type={'text'}
+                    value={titleFixed}
+                    onChange={(e) => setTitleFixed(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl isRequired>
+                  <FormLabel>Title</FormLabel>
+                  <Input
+                    placeholder="Conteudo do fixado"
+                    type={'text'}
+                    value={contentFixed}
+                    onChange={(e) => setContentFixed(e.target.value)}
+                  />
+                </FormControl>
+              </ModalBody>
 
-                        <ModalFooter>
-                            <Button colorScheme="blue" mr={3} type="submit">
-                                Save
-                            </Button>
-                            <Button onClick={onClose} textColor="white">
-                                Cancel
-                            </Button>
-                        </ModalFooter>
-                    </form>
-                </ModalContent>
-            </Modal>
-            { Object.keys(fixedSelected) !== 0 &&
-              <Modal isCentered isOpen={isOpenFixed} onClose={onCloseFixed} size="lg">
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>{fixedSelected.title}</ModalHeader>
-                    <Divider w="100%" />
-                    <ModalCloseButton />
-                        <ModalBody pb={6}>
-                          <Text>{fixedSelected.content}</Text>
-                        </ModalBody>
+              <ModalFooter>
+                <Button colorScheme="blue" mr={3} type="submit">
+                  Save
+                </Button>
+                <Button onClick={onClose} textColor="white">
+                  Cancel
+                </Button>
+              </ModalFooter>
+            </form>
+          </ModalContent>
+        </Modal>
+        {Object.keys(fixedSelected) !== 0 &&
+          <Modal isCentered isOpen={isOpenFixed} onClose={onCloseFixed} size="lg">
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>{fixedSelected.title}</ModalHeader>
+              <Divider w="100%" />
+              <ModalCloseButton />
+              <ModalBody pb={6}>
+                <Text>{fixedSelected.content}</Text>
+              </ModalBody>
 
-                        <ModalFooter justifyContent={'space-between'}>
-                          <Text>{formatDate(fixedSelected.updatedAt)}</Text>
-                            <Button onClick={onCloseFixed} textColor="white">
-                                Cancel
-                            </Button>
-                        </ModalFooter>
-                </ModalContent>
-            </Modal>
-          }
+              <ModalFooter justifyContent={'space-between'}>
+                <Text>
+                  {formatDate(fixedSelected.updatedAt)} {fixedSelected.author && <>by <Link as={ReactLink} to={me && me.id === fixedSelected.author.id ? `/profile` : `/profile/${fixedSelected.author.id}`} fontWeight={'semibold'}>{fixedSelected.author.name}</Link></>}
+                </Text>
+                <Button onClick={onCloseFixed} textColor="white">
+                  Cancel
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        }
       </Base>
     );
   }

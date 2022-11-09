@@ -18,7 +18,7 @@ function Base({ children, padding, title, direction }) {
             <NavBar />
             <Flex w="100%" flexDirection={"column"}>
                 <Header page={title || page} user={user}/>
-                <Flex h="100%" w="100%" maxW="100%" p={padding || "24px"} flexDirection={direction} overflowX='hidden'>
+                <Flex h="100%" w="100%" maxW="100%" p={padding || "24px"} flexDirection={direction} overflowX='hidden' bgColor={'gray.50'}>
                     {children}
                 </Flex>
             </Flex>

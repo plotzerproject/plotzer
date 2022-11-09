@@ -23,7 +23,9 @@ import Team from "./pages/Teams/Team";
 import AssignmentSingle from "./pages/Assignment";
 import TeamMembers from "./pages/Teams/TeamMembers";
 import TeamStats from "./pages/Teams/TeamStats";
-import TeamAssignments from "./pages/Teams/Assignments";
+import TeamAssignments from "./pages/Teams/TeamAssignments";
+import AssignmentAdm from "./pages/Teams/AssigmentAdm";
+import TeamRequests from "./pages/Teams/TeamRequests";
 
 // function Private1({ children, auth }) {
 //     if (!auth) {
@@ -51,19 +53,19 @@ export function ReactRoutes() {
         return authenticated ? <Item /> : <Navigate to="/login"/>
       };
 
-      const VerifyAuth = ({Item})=>{
+      const VerifyAuth = ({children})=>{
         const {authenticated} = useAuth();
 
-        return authenticated ? <Navigate to="/dashboard" /> : <Item />
+        return authenticated ? <Navigate to="/dashboard" state={{}}/> : children
       }
 
     return (
         <>
             <Routes>
                 <Route exact path="/" element={<Home />}/>
-                <Route exact path="/plans" element={<Offers />}/>
-                <Route exact path="/signup" element={<VerifyAuth Item={SignUp}/>}/>
-                <Route exact path="/login" element={<VerifyAuth Item={LogIn} />}/>
+                <Route exact path="/offers" element={<Offers />}/>
+                <Route exact path="/signup" element={<VerifyAuth><SignUp /></VerifyAuth>}/>
+                <Route exact path="/login" element={<VerifyAuth><LogIn /></VerifyAuth>}/>
 
                 <Route path="/signed" element={<SignUpMiddleware Item={MiddlePageSignUp}/>} />
                 {/** fazer pra caso o usuario cadastre-se pasasr por essas paginas, se n elas nem existem!! */}
@@ -82,9 +84,15 @@ export function ReactRoutes() {
 
                 <Route path="/teams" element={<Private Item={Teams}/>} />
                 <Route path="/teams/:id_team" element={<Private Item={Team}/>} />
+                
                 <Route path="/teams/:id_team/assignments" element={<Private Item={TeamAssignments}/>} />
+                <Route path="/teams/:id_team/assignments/:id_assignment" element={<Private Item={AssignmentAdm}/>} />
+
                 <Route path="/teams/:id_team/members" element={<Private Item={TeamMembers}/>} />
                 <Route path="/teams/:id_team/stats" element={<Private Item={TeamStats}/>} />
+                <Route path="/teams/:id_team/requests" element={<Private Item={TeamRequests}/>} />
+
+                <Route path="/profile/:id_user" element={<Private Item={Profile}/>} />
             </Routes>
         </>
     )

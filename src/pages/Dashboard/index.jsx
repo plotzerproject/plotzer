@@ -10,6 +10,14 @@ import { FaPlusSquare } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { getInitials } from "../../utils/strings";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper";
+import "swiper/css";
+import "swiper/css/navigation";
+import './style.css'
+import Calendar from "react-calendar";
+import 'react-calendar/dist/Calendar.css';
+
 function Dashboard() {
 
   let navigate = useNavigate();
@@ -21,8 +29,11 @@ function Dashboard() {
   const [error, setError] = useState({})
   const [errorGetAssignment, setErrorGetAssignment] = useState({})
 
-  useEffect(() => {
+  const [calendar, onChangeCalendar] = useState(new Date());
 
+
+
+  useEffect(() => {
     async function getMyAssignments() {
       setLoading(true);
       try {
@@ -83,16 +94,16 @@ function Dashboard() {
                 Principais Equipes
               </Heading>
               {teams.length !== 0 ?
-              <Grid
-              templateColumns='1fr 1fr'
-              gap={4}
-            >
-              {teams.slice(0, 4).map((team)=>{
-                return <GridItem w="150px" h="150px" key={team.id} onClick={()=>navigate(`/teams/${team.id}`)} cursor='pointer'>
-                {team.attributes.photo ? <Box w="100%" h="100%" backgroundImage={team.attributes.photo} backgroundRepeat="no-repeat" backgroundPosition={'cover'} /> : <Box w="100%" h="100%" bg={'gray.500'}><Text fontWeight={'bold'} fontSize='6xl' textAlign={'center'}>{getInitials(team.attributes.name)}</Text></Box>}
-              </GridItem>
-              })}
-            </Grid>
+                <Grid
+                  templateColumns='1fr 1fr'
+                  gap={4}
+                >
+                  {teams.slice(0, 4).map((team) => {
+                    return <GridItem w="150px" h="150px" key={team.id} onClick={() => navigate(`/teams/${team.id}`)} cursor='pointer'>
+                      {team.attributes.photo ? <Box w="100%" h="100%" backgroundImage={team.attributes.photo} backgroundRepeat="no-repeat" backgroundPosition={'cover'} /> : <Box w="100%" h="100%" bg={'gray.500'}><Text fontWeight={'bold'} fontSize='6xl' textAlign={'center'}>{getInitials(team.attributes.name)}</Text></Box>}
+                    </GridItem>
+                  })}
+                </Grid>
                 :
                 <VStack justify={'center'} align='center' h="100%">
                   <HStack>
@@ -112,10 +123,28 @@ function Dashboard() {
                 </VStack>}
             </VStack>
           </HStack>
-          <NextAssignments assignments={assignments} error={Boolean(assignments)} />
+          <NextAssignments assignments={assignments} error={Boolean(assignments)} showTeam={true} />
         </VStack>
         <VStack w={"25%"} bgColor={"blue.100"} h="100%">
           <Warnings />
+          <HStack w="100%" h="230px">
+            <Swiper
+              navigation={true}
+              pagination={true}
+              modules={[Navigation, Pagination]}
+              // modules={[Pagination]}
+              className="swiper2"
+            >
+              <SwiperSlide>
+                teste
+              </SwiperSlide>
+              <SwiperSlide>Slide 2</SwiperSlide>
+              <SwiperSlide>Slide 3</SwiperSlide>
+              <SwiperSlide>Slide 4</SwiperSlide>
+              <SwiperSlide>Slide 5</SwiperSlide>
+            </Swiper>
+          </HStack>
+          <Calendar onChange={onChangeCalendar} value={calendar} />
         </VStack>
       </Base>
     );

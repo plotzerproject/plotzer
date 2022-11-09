@@ -52,7 +52,7 @@ function Warnings() {
         </Flex>
         <VStack>
           {warns.map((item, indice) => {
-            if (indice < 5) {
+            if (indice < 4) {
               return (<HStack
                 key={item.id}
                 bgColor={"white"}
@@ -64,6 +64,8 @@ function Warnings() {
                 flexDirection="column"
                 alignItems={"center"}
                 justifyContent="center"
+                onClick={()=>alert("Valores estaticos para testes")}
+                cursor='pointer'
               >
                 <Heading fontSize={"md"} fontWeight="medium">
                   {item.title}

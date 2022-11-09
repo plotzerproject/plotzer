@@ -15,6 +15,7 @@ import {
     Center,
     Icon,
     Flex,
+    ButtonGroup,
 } from '@chakra-ui/react'
 
 import { FaGoogle, FaEyeSlash, FaEye, FaUserAlt } from 'react-icons/fa'
@@ -23,16 +24,25 @@ import Logo from '../../assets/logo_type.svg'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { useEffect } from 'react'
 
 // import { ToastContainer, toast } from 'react-toastify';
 
 
 function LogIn() {
-    const { Login } = useAuth()
+
+    const { Login, loading, authenticated } = useAuth()
+    const navigate = useNavigate();
+
+    // useEffect(()=>{
+    //     if(authenticated) {
+    //         navigate("/dashboard")
+    //     }
+    // }, [])
+
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    const navigate = useNavigate();
 
     const [showPassword, setShowPassword] = useState(false)
     const handleClick = () => setShowPassword(!showPassword)
@@ -43,7 +53,7 @@ function LogIn() {
         //validar o email e senha com yup
         if (email !== "" && password !== "") {
             await Login(email, password)
-            navigate("/dashboard", { replace: true });
+            // navigate("/dashboard")
         } else {
             alert("Campos vazios")
         }
@@ -66,12 +76,12 @@ function LogIn() {
                     <form>
                         <FormControl>
                             <FormLabel>Email</FormLabel>
-                            <InputGroup>
+                            <InputGroup >
                                 <InputLeftElement children={<FaUserAlt />} />
                                 <Input type='email' placeholder='Insira seu e-mail' value={email} onChange={(e) => setEmail(e.target.value)} />
                             </InputGroup>
                         </FormControl>
-                        <FormControl>
+                        <FormControl mt="16px">
                             <FormLabel>Senha</FormLabel>
                             <InputGroup>
                                 <InputLeftElement children={<LockIcon />} />
@@ -83,14 +93,17 @@ function LogIn() {
                                 </InputRightElement>
                             </InputGroup>
                         </FormControl>
-                        <Button colorScheme='teal' variant='solid' onClick={handleLogIn} marginTop='20px'>Logar</Button>
+                        <ButtonGroup>
+                            <Button colorScheme='teal' variant='solid' onClick={()=>navigate("/")} marginTop='20px'>Voltar</Button>
+                            <Button colorScheme='teal' variant='solid' onClick={handleLogIn} marginTop='20px' isLoading={loading} loadingText='Logando'>Logar</Button>
+                        </ButtonGroup>
                     </form>
                     <Center height='20px' w="100%">
                         <Divider orientation='horizontal' borderColor='gray.300' />
                         <Text>ou</Text>
                         <Divider orientation='horizontal' borderColor='gray.300' />
                     </Center>
-                    <Button leftIcon={<Icon as={FaGoogle} />} colorScheme='teal' variant='solid' onClick={handleGoogleLogIn}><Divider orientation='vertical' borderColor='gray.300' h={'60%'} p={1} />Logar com Google</Button>
+                    <Button leftIcon={<Icon as={FaGoogle} />} colorScheme='teal' variant='outline' onClick={handleGoogleLogIn}><Divider orientation='vertical' borderColor='gray.300' h={'30%'} p={1} />Logar com Google</Button>
                 </VStack>
             </Container>
         </Flex>

@@ -8,11 +8,15 @@ function MiddlePageSignUp() {
     const navigate = useNavigate();
 
     function handleCreateTeam() {
-        navigate("/start/createteam", {replace: false})
+        alert("Ocorreram erros ao desenvolver esta funcionalidade")
+        navigate("/dashboard")
+        // navigate("/start/createteam", {replace: false})
     }
     
     function handleJoinTeam() {
-        navigate("/start/jointeam", {replace: false})
+        alert("Ocorreram erros ao desenvolver esta funcionalidade")
+        navigate("/dashboard")
+        // navigate("/start/jointeam", {replace: false})
         
     }
     
