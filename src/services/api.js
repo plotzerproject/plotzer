@@ -2,6 +2,7 @@ import axios from "axios";
 
 export const api = axios.create({
   baseURL: process.env.REACT_APP_SERVER_URL,
+  // baseURL: "https://plotzer-api.herokuapp.com/api"
 });
 
 const token = localStorage.getItem("token")

@@ -140,12 +140,11 @@ function Team() {
           title: titleFixed,
           content: contentFixed
         }
-        const a = await api.post(`/team/${id_team}/fixed`, data)
+        await api.post(`/team/${id_team}/fixed`, data)
         setTitleFixed("")
         setContentFixed("")
         onClose()
         await getTeam()
-        console.log(a)
       } catch (error) {
         console.log(error)
       }

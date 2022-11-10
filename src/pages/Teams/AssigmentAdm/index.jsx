@@ -86,7 +86,7 @@ function AssignmentAdm() {
                         <VStack>
                             {
                                 assignment && assignment.attributes.assignment.assignmentAttachments.length !== 0 ? assignment.attributes.assignment.assignmentAttachments.map((attachment) => {
-                                    return <Flex w="100%" p="20px" bgColor={'gray.300'} onClick={() => { alert("como alterar a pag?") }} cursor='pointer' key={attachment.id}>
+                                    return <Flex w="100%" p="20px" bgColor={'gray.300'} onClick={() => {window.open(attachment.url, "_blank")}} cursor='pointer' key={attachment.id}>
                                         <Heading fontSize={'md'}>{attachment.name}</Heading>
                                     </Flex>
                                 }) : <Text>Nenhum arquivo anexado!</Text>
@@ -125,8 +125,7 @@ function AssignmentAdm() {
                         <VStack >
                             {Object.keys(userSelected).length !== 0 ?
                                 userSelected.userAttachments.length !== 0 ? userSelected.userAttachments.map((attachment, key) => {
-                                    console.log(attachment)
-                                    return <Flex key={key} w="100%" p="20px" bgColor={'gray.300'} onClick={() => { alert("testes") }} cursor='pointer'>
+                                    return <Flex key={key} w="100%" p="20px" bgColor={'gray.300'} onClick={() => {window.open(attachment.url, "_blank")}} cursor='pointer'>
                                         <Heading fontSize={'md'}>{attachment.name}</Heading>
                                     </Flex>
                                 }) : <Text>Nenhum arquivo anexado!</Text>

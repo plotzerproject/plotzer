@@ -84,11 +84,13 @@ export const AuthProvider = ({ children }) => {
 
       setLoading(false)
 
-    } catch (error) {
+      return userData
+
+    } catch (err) {
       //todo
       setLoading(false)
-      console.log('login ', error)
-      throw new Error(error)
+      console.log(err)
+      throw new Error(err.response.data.errors[0].title)
     }
   }
 

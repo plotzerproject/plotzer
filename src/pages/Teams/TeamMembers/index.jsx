@@ -4,9 +4,10 @@ import Base from "../../../components/Base";
 import Loading from "../../Loading";
 import { api } from "../../../services/api";
 import {
-    Button, HStack, VStack, Table, Thead, Tbody, Tr, Th, Td, TableCaption, TableContainer, Badge, Avatar, Text, Modal, ModalOverlay, ModalContent, ModalHeader, Divider, ModalCloseButton, ModalBody, FormControl, FormLabel, Input, ModalFooter, useDisclosure, Select
+    Button, HStack, VStack, Table, Thead, Tbody, Tr, Th, Td, TableCaption, TableContainer, Badge, Avatar, Text, Modal, ModalOverlay, ModalContent, ModalHeader, Divider, ModalCloseButton, ModalBody, FormControl, FormLabel, Input, ModalFooter, useDisclosure, Select, Tooltip, IconButton
 } from "@chakra-ui/react";
 import TeamInfo from "../../../components/TeamInfo";
+import { CloseIcon } from "@chakra-ui/icons";
 
 function TeamMembers() {
   let navigate = useNavigate();
@@ -19,20 +20,35 @@ function TeamMembers() {
     const [memberInvite, setMemberInvite] = useState("")
     const [roleMember, setRoleMember] = useState("")
 
+    const [members, setMembers] = useState([])
+
+    const [me, setMe] = useState({})
+
+    const userLC = JSON.parse(localStorage.getItem("user"))
+
     async function getTeam() {
-        setLoading(true);
         try {
             const teams = await api.get(`/team/${id_team}/members`);
             setTeam(teams.data.data);
-            setLoading(false)
-        } catch (error) {
-            console.log(error);
+            const m = teams.data.data.attributes.members.sort((a, b)=>{
+                return a.tag.localeCompare(b.tag)
+            })
+            setMembers(m)
+
+            const meIndex = m.findIndex((user)=>user.id === userLC.id)
+            setMe(meIndex)
+
+        } catch (err) {
+            console.log(err);
         }
-        setLoading(false);
     }
 
     useEffect(() => {
-        getTeam()
+        async function exec(){
+            await getTeam()
+            setLoading(false)
+        }
+        exec()
     }, [])
 
     const colorsTag = [
@@ -48,15 +64,17 @@ function TeamMembers() {
         if (memberInvite !== "" && roleMember !== "") {
             try {
 
+                //melhorar esse userPermissions, eu basicamente tenho que dar um findIndex no colorsTag e mandar ele
+                const permissionsIndex = colorsTag.findIndex((c)=>c[0] === roleMember)
+
                 const data = {
                     email: memberInvite,
                     tag: roleMember,
-                    userPermissions: Number(roleMember.split("r-")[1])
+                    userPermissions: permissionsIndex
                 }
 
                 // console.log(id_team)
                 const a = await api.post(`/team/${id_team}/members/invite`, data);
-                console.log(a)
 
                 setMemberInvite("")
                 setRoleMember("")
@@ -66,7 +84,7 @@ function TeamMembers() {
 
                 onClose();
 
-                alert("Created!");
+                alert("Adicionado!");
 
             } catch (err) {
                 console.log(err);
@@ -79,7 +97,17 @@ function TeamMembers() {
         }
     }
 
-    if (loading) {
+    async function handleRemoveUser(id){
+        try {
+            const remove = await api.post(`/team/${id_team}/members/remove`, {id})
+            console.log(remove)
+            await getTeam()
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    if (loading && Object.keys(team) !== 0) {
         return <Loading />
     } else {
         return <Base title={team.attributes.name}>
@@ -101,19 +129,35 @@ function TeamMembers() {
                         </Thead>
                         <Tbody>
                             {
-                                team.attributes.members ? team.attributes.members.map((member) => (
+                                members ? members.map((member) => (
                                     <Tr key={member.id}>
                                         <Td>
-                                            <HStack onClick={()=>navigate(`/profile/${member.id}`)} cursor='pointer'>
+                                            <HStack w="70%" justify={'space-between'}>
+                                                <HStack onClick={()=>navigate(`/profile/${member.id}`)} cursor='pointer' >
                                                 {member.photo && <Avatar
                                                     name={member.name}
                                                     size="sm"
                                                     src={member.photo}
                                                 />}
 
-                                                <Text>
+                                                <Text textDecor={'underline'}>
                                                     {member.name}
                                                 </Text>
+                                                </HStack>
+                                                {
+                                                    me && members[me].userPermissions > 2 && members[me].userPermissions > member.userPermissions ? 
+                                                    member !== members[me] ?  <Tooltip label={`Remover usuário "${member.name}"`} placement="right">
+                                                        <IconButton
+                                                        color={"white"}
+                                                        aria-label={`Remover usuário "${member.name}"`}
+                                                        onClick={()=>handleRemoveUser(member.id)}
+                                                        h="32px"
+                                                        icon={<CloseIcon />}
+                                                        />
+                                                    </Tooltip> 
+                                                    : null
+                                                  : null
+                                                }
                                             </HStack>
                                         </Td>
                                         <Td>{member.tag}</Td>

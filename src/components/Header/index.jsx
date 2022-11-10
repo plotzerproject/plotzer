@@ -77,7 +77,7 @@ function Header({ page }) {
   async function handleAcceptInvite(id_team){
     try {
       const accept = await api.post(`/team/accept/${id_team}`)
-      openNotifications()
+      onClose()
     } catch (err) {
       console.log(err.message)
       setError(err.message)

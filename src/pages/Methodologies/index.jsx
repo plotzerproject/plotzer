@@ -121,7 +121,7 @@ function Methodologies() {
                                     <Input
                                         placeholder="Create Topic"
                                         value={color}
-                                        onChange={(e) => { setColor(e.target.value); console.log(e.target.value) }}
+                                        onChange={(e) => { setColor(e.target.value); }}
                                         type='color'
                                     />
                                 </FormControl>

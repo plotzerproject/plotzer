@@ -22,12 +22,12 @@ function AssignmentSingle() {
             const req = await api.get(`/assignment/${id_assignment}`);
             setAssignment(req.data.data)
         } catch (err) {
-            console.log(err)
+            console.log('e', err)
 
             //fazer o erro se não tiver permissão prra isso
 
-            if (error.response.data.errors[0].title !== "ERR_ASSIGNMENT_NOT_FOUND") {
-                setError(error.response.data.errors[0])
+            if (err.response.data.errors[0].title !== "ERR_ASSIGNMENT_NOT_FOUND") {
+                setError(err.response.data.errors[0])
             }
         }
     }
@@ -43,7 +43,6 @@ function AssignmentSingle() {
         try {
             const data = new FormData()
             const files = [...userAttachments]
-            console.log(files)
             files.forEach((file)=>{
                 data.append("userAttachments", file)
             })
@@ -114,7 +113,7 @@ function AssignmentSingle() {
                         <VStack>
                             {
                                 assignment && assignment.attributes.assignmentAttachments.length !== 0 ? assignment.attributes.assignmentAttachments.map((attachment) => {
-                                    return <Flex w="100%" p="20px" bgColor={'gray.300'} onClick={() => { alert("testes?") }} cursor='pointer' key={attachment.id}>
+                                    return <Flex w="100%" p="20px" bgColor={'gray.300'} onClick={() => {window.open(attachment.url, "_blank")}} cursor='pointer' key={attachment.id}>
                                         <Heading fontSize={'md'}>{attachment.name}</Heading>
                                     </Flex>
                                 }) : <Text>Nenhum arquivo anexado!</Text>
@@ -140,7 +139,7 @@ function AssignmentSingle() {
                             {
                                 userAttachments ? userAttachments.map((attachment, key)=>{
                                     // return <Heading key={key}>teste</Heading>
-                                    return <Flex key={key} w="100%" p="20px" bgColor={'gray.300'} onClick={() => { alert("como alterar a pag?") }} cursor='pointer'>
+                                    return <Flex key={key} w="100%" p="20px" bgColor={'gray.300'} onClick={() => {window.open(attachment.url, "_blank")}} cursor='pointer'>
                                     <Heading fontSize={'md'}>{attachment.name}</Heading>
                                 </Flex>
                                 }) : null

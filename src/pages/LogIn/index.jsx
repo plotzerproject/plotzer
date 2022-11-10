@@ -25,6 +25,7 @@ import { useNavigate } from 'react-router-dom'
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useEffect } from 'react'
+import ErrorMessage from '../../components/ErrorMessage'
 
 // import { ToastContainer, toast } from 'react-toastify';
 
@@ -33,6 +34,8 @@ function LogIn() {
 
     const { Login, loading, authenticated } = useAuth()
     const navigate = useNavigate();
+
+    const [error, setError] = useState("")
 
     // useEffect(()=>{
     //     if(authenticated) {
@@ -51,11 +54,19 @@ function LogIn() {
         e.preventDefault()
         //cadastrar e talz
         //validar o email e senha com yup
-        if (email !== "" && password !== "") {
-            await Login(email, password)
-            // navigate("/dashboard")
-        } else {
-            alert("Campos vazios")
+        try {
+            if (email !== "" && password !== "") {
+                await Login(email, password)
+                // navigate("/dashboard")
+            } else {
+                alert("Campos vazios")
+            }
+        } catch (err) {
+            if(err.message === "ERR_USER_INCORRECT") {
+                setError(err.message)
+            } else {
+                alert("Ocorreu um erro ao logar, tente novamente mais tarde!")
+            }
         }
 
     }
@@ -73,7 +84,10 @@ function LogIn() {
                     spacing={3}
                 >
                     <Image src={Logo} alt='Logo Plotzer' />
-                    <form>
+                    {
+                        error && error === "ERR_USER_INCORRECT"? <ErrorMessage message={"E-mail ou senha incorretos!"}/> : null
+                    }
+                    <form onSubmit={handleLogIn}>
                         <FormControl>
                             <FormLabel>Email</FormLabel>
                             <InputGroup >
@@ -95,7 +109,7 @@ function LogIn() {
                         </FormControl>
                         <ButtonGroup>
                             <Button colorScheme='teal' variant='solid' onClick={()=>navigate("/")} marginTop='20px'>Voltar</Button>
-                            <Button colorScheme='teal' variant='solid' onClick={handleLogIn} marginTop='20px' isLoading={loading} loadingText='Logando'>Logar</Button>
+                            <Button colorScheme='teal' variant='solid' type='submit' marginTop='20px' isLoading={loading} loadingText='Logando'>Logar</Button>
                         </ButtonGroup>
                     </form>
                     <Center height='20px' w="100%">
