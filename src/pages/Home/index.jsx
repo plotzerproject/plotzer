@@ -18,7 +18,7 @@ function Home() {
                     <Grid templateColumns={'1fr 1fr'} alignItems='center' justifyContent={'center'} gap='70px'>
                         <GridItem>
                             <Heading fontSize={'5xl'} as='h1'>Acelere sua produtividade</Heading>
-                            <Text fontSize={'xl'}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque faucibus dui arcu, nec viverra sem scelerisque quis. </Text>
+                            <Text fontSize={'xl'}>Com o Plotzer existe a possibilidade de você acelerar seus projetos em conjunto de sua equipe. </Text>
                             <Button colorScheme="teal" onClick={() => { navigate("/offers") }}>Saiba mais</Button>
                         </GridItem>
                         <GridItem>

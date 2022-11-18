@@ -65,18 +65,22 @@ function TeamAssignments() {
                 '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
                 '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
                 '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
-            const members = req.data.data.attributes.members.map((member) => {
-                const colorIndex = Math.random() * (colorArray.length);
-                const color = colorArray[colorIndex]
-                return {
-                    ...member,
-                    label: member.email,
-                    value: member.id,
-                    colorScheme: color
+
+            const members = [];
+            for(const member of req.data.data.attributes.members) {
+                if (member.member_active) {
+                    const colorIndex = Math.random() * (colorArray.length);
+                    const color = colorArray[colorIndex]
+                    members.push({
+                        ...member,
+                        label: member.email,
+                        value: member.id,
+                        colorScheme: color
+                    })
                 }
-            })
+            }
+                
             setTeamMembers(members)
-            console.log(members)
         } catch (err) {
             console.log(err)
         }
@@ -92,35 +96,35 @@ function TeamAssignments() {
         onClose()
     }
 
-    async function handleCreateAssignment(e){
+    async function handleCreateAssignment(e) {
         e.preventDefault()
-        if(assignmentTitle !== "" && assignmentCategory !== "" && assignmentDescription !== "" && assignmentMembers !== "" && assignmentDateLimit !== ""){
+        if (assignmentTitle !== "" && assignmentCategory !== "" && assignmentDescription !== "" && assignmentMembers !== "" && assignmentDateLimit !== "") {
             const date = new Date()
             const dateLimitUTF = new Date(assignmentDateLimit)
-            if(dateLimitUTF > date){
+            if (dateLimitUTF > date) {
                 const formData = new FormData()
-                const members = assignmentMembers.map((member)=>{
+                const members = assignmentMembers.map((member) => {
                     formData.append("users", member.id)
                     return member.id
                 })
-    
                 formData.append("title", assignmentTitle)
                 formData.append("id_team", id_team)
                 formData.append("dateLimit", assignmentDateLimit)
-                
+
                 formData.append("description", assignmentDescription)
                 formData.append("category", assignmentCategory)
-    
+
                 //add files
                 const files = [...userAttachments]
-                files.forEach((file)=>{
+                files.forEach((file) => {
                     formData.append("assignmentAttachments", file)
                 })
 
-                console.log(files)
-    
+                // console.log(files)
+
                 const request = await api.post(`/assignment`, formData, {headers: { 'content-type': 'multipart/form-data'}})
-                console.log(request)
+                // console.log(request)
+                alert("Criado!")
 
                 setAssignmentCategory("")
                 setAssignmentDateLimit("")
@@ -207,7 +211,7 @@ function TeamAssignments() {
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Descrição</FormLabel>
-                                <Textarea 
+                                <Textarea
                                     placeholder="Descrição da tarefa"
                                     value={assignmentDescription}
                                     onChange={(e) => setAssignmentDescription(e.target.value)}
@@ -224,38 +228,39 @@ function TeamAssignments() {
 
                             <FormControl mt={4}>
                                 <FormLabel>Data Limite</FormLabel>
-                                <Input placeholder="Task's date limit" type="datetime-local" value={assignmentDateLimit} onChange={(e)=>setAssignmentDateLimit(e.target.value)} />
+                                <Input placeholder="Task's date limit" type="datetime-local" value={assignmentDateLimit} onChange={(e) => setAssignmentDateLimit(e.target.value)} />
                             </FormControl>
                             <FormControl>
-                            <FormLabel>Membros</FormLabel>
-                            <AsyncSelect
-                                isMulti
-                                name="colors"
-                                placeholder="Selecione alguns usuarios"
-                                components={asyncComponents}
-                                onChange={setAssignmentMembers}
-                                value={assignmentMembers}
-                                loadOptions={(inputValue, callback) => {
-                                    setTimeout(() => {
-                                        const values = teamMembers.filter((member) =>
-                                            member.label.toLowerCase().includes(inputValue.toLowerCase())
-                                        );
-                                        callback(values);
-                                    }, 1000);
-                                }}
-                            />
-                        </FormControl>
-                        <FormControl mt={1} isRequired>
-                                        <FormLabel>Anexos</FormLabel>
-                                        <Input
-                                            type={'file'}
-                                            onChange={(e) => setUserAttachments(e.target.files)}
-                                            multiple
-                                            accept="image/*"
-                                        // value={title}
-                                        // onChange={(e) => setTitle(e.target.value)}
-                                        />
-                                    </FormControl>
+                                <FormLabel>Membros</FormLabel>
+                                <AsyncSelect
+                                    isMulti
+                                    name="colors"
+                                    placeholder="Selecione alguns usuarios"
+                                    components={asyncComponents}
+                                    onChange={setAssignmentMembers}
+                                    value={assignmentMembers}
+                                    loadOptions={(inputValue, callback) => {
+                                        setTimeout(() => {
+                                            const values = teamMembers.filter((member) => {
+                                                return member.label.toLowerCase().includes(inputValue.toLowerCase())
+                                            }
+                                            );
+                                            callback(values);
+                                        }, 1000);
+                                    }}
+                                />
+                            </FormControl>
+                            <FormControl mt={1} isRequired>
+                                <FormLabel>Anexos</FormLabel>
+                                <Input
+                                    type={'file'}
+                                    onChange={(e) => setUserAttachments(e.target.files)}
+                                    multiple
+                                    accept="image/*"
+                                // value={title}
+                                // onChange={(e) => setTitle(e.target.value)}
+                                />
+                            </FormControl>
                         </ModalBody>
 
                         <ModalFooter>

@@ -106,7 +106,7 @@ function AssignmentAdm() {
                             <VStack w="100%" h="100%" overflowY={'scroll'} p="16px">
                                 {
                                     assignment.attributes.users.length !== 0 ? assignment.attributes.users.map((user) => {
-                                        return <HStack h="60px" bgColor={'gray.300'} w="100%" onClick={() => setUserSelected(user)} cursor='pointer' p="6px 20px" borderRadius={'12px'} m="8px 0">
+                                        return <HStack h="60px" bgColor={'gray.300'} w="100%" onClick={() => setUserSelected(user)} cursor='pointer' p="6px 20px" borderRadius={'12px'} m="8px 0" key={user.id}>
                                             <Avatar
                                                 size='md'
                                                 name={user.user.name}
@@ -124,11 +124,12 @@ function AssignmentAdm() {
                         <Divider w="100%" margin={'0 auto'} />
                         <VStack >
                             {Object.keys(userSelected).length !== 0 ?
+                            userSelected.status !== "received" ? 
                                 userSelected.userAttachments.length !== 0 ? userSelected.userAttachments.map((attachment, key) => {
                                     return <Flex key={key} w="100%" p="20px" bgColor={'gray.300'} onClick={() => {window.open(attachment.url, "_blank")}} cursor='pointer'>
                                         <Heading fontSize={'md'}>{attachment.name}</Heading>
                                     </Flex>
-                                }) : <Text>Nenhum arquivo anexado!</Text>
+                                }) : <Text>Nenhum arquivo anexado!</Text> : <Text>Usuário não enviou a tarefa</Text>
                                 : <Text>Selecione um usuário</Text>}
                         </VStack>
                     </VStack>
